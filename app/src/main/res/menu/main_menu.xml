@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fullMenu"
+        android:icon="@drawable/ic_filter_list"
+        android:title="menu"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/all"
+                android:actionLayout="@layout/full_screen_dialog"
+                android:title="All"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/food"
+                android:actionLayout="@layout/full_screen_dialog"
+                android:title="Food"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/fruit"
+                android:title="Fruit"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/vegetable"
+                android:title="Vegetable"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/meat"
+                android:title="Meat"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/snack"
+                android:title="Snack"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>

@@ -1,3 +1,55 @@
 <resources>
-    <string name="app_name">FoodDi</string>
+    <string name="app_name">Di Food</string>
+    <string name="eat">Food should not eat together</string>
+    <string name="see">အမှန်မြင်ရသည်</string>
+    <string name="search">အစားအစာရှာရန်</string>
+    <string name="setting">ပြင်ဆင်ချက်များ</string>
+    <string name="chooseLanguage">ဘာသာစကားရွေးရန်</string>
+    <string name="newFood">အစားစာ အသစ်</string>
+    <string name="aboutApp">ဆော့ဝဲလ်အကြောင်း</string>
+    <string name="all">အားလုံး</string>
+    <string name="food">အစားသောက်များ</string>
+    <string name="fruit">သစ်သီးများ</string>
+    <string name="vegetable">ဟင်းသီးရွက်များ</string>
+    <string name="meat">အသားများ</string>
+    <string name="snack">သရေစာများ</string>
+    <string name="wait">ခေတ္တစောင့်ဆိုင်းပေးပါ</string>
+    <string name="data">အချက်အလက်များရယူနေပါတယ်</string>
+    <string name="connection">အင်တာနက်ချိတ်ဆက်မှုမရှိပါ</string>
+    <string name="retry">ထပ်စစ်ရန်</string>
+
+    <string name="seeZ">အမွန္ျမင္ရသည္</string>
+    <string name="searchZ">အစားအစာ႐ွာရန္</string>
+    <string name="settingZ">ျပင္ဆင္ခ်က္မ်ား</string>
+    <string name="chooseLanguageZ">ဘာသာစကားေရြးရန္</string>
+    <string name="newFoodZ">အစားစာ အသစ္</string>
+    <string name="aboutAppZ">ေဆာ့ဝဲလ္အေၾကာင္း</string>
+    <string name="allZ">အားလံုး</string>
+    <string name="foodZ">အစားေသာက္မ်ား</string>
+    <string name="fruitZ">သစ္သီးမ်ား</string>
+    <string name="vegetableZ">ဟင္းသီး႐ြက္မ်ား</string>
+    <string name="meatZ">အသားမ်ား</string>
+    <string name="snackZ">သေရစာမ်ား</string>
+    <string name="waitZ">ေခတၱေစာင့္ဆိုင္းေပးပါ</string>
+    <string name="dataZ">အခ်က္အလက္မ်ားရယူေနပါတယ္</string>
+    <string name="connectionZ">အင္တာနက္ခ်ိတ္ဆက္မႈမ႐ွိပါ</string>
+    <string name="retryZ">ထပ္စစ္ရန္</string>
+
+    <string name="seeE">English</string>
+    <string name="searchE">Search..</string>
+    <string name="settingE">Setting</string>
+    <string name="chooseLanguageE">Choose Language</string>
+    <string name="newFoodE">Add new food</string>
+    <string name="aboutAppE">About App</string>
+    <string name="allE">All</string>
+    <string name="foodE">Foods</string>
+    <string name="fruitE">Fruits</string>
+    <string name="vegetableE">Vegetables</string>
+    <string name="meatE">Meats</string>
+    <string name="snackE">Snacks</string>
+    <string name="waitE">Please wait</string>
+    <string name="dataE">Retrieving data</string>
+    <string name="connectionE">No Internet Connection</string>
+    <string name="retryE">Retry</string>
+
 </resources>
