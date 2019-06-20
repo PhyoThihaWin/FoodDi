@@ -5,14 +5,13 @@
     package="com.pthw.food">
 
     <!--<dist:module dist:instant="true" />-->
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo_border"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo_border"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
@@ -27,10 +26,15 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="">
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1912473277854219~7278044086" />
+
     </application>
 
 </manifest>

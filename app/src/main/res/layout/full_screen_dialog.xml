@@ -50,7 +50,7 @@
         android:text="Choose Language"
         android:textColor="@color/header"
         android:textSize="18dp"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+        app:layout_constraintTop_toBottomOf="@+id/adView" />
 
     <TextView
         android:id="@+id/txtAddFood"
@@ -89,5 +89,48 @@
         android:textColor="@color/header"
         android:textSize="18dp"
         app:layout_constraintTop_toBottomOf="@+id/txtAddFood" />
+
+
+    <TextView
+        android:id="@+id/txtMoreApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:clickable="true"
+        android:drawableLeft="@drawable/ic_more_app"
+        android:drawablePadding="24dp"
+        android:fontFamily="sans-serif"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingLeft="32dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:text="More Applications"
+        android:textColor="@color/header"
+        android:textSize="18dp"
+        app:layout_constraintTop_toBottomOf="@+id/txtAboutApp" />
+
+    <LinearLayout
+        android:layout_width="8dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/txtMoreApp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtMoreApp">
+
+    </LinearLayout>
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/card_background_style"
+        ads:adSize="LARGE_BANNER"
+        ads:adUnitId="@string/Banner_id"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toBottomOf="@+id/appbar" />
 
 </android.support.constraint.ConstraintLayout>

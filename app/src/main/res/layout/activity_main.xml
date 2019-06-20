@@ -24,8 +24,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/app_name"
             android:textColor="#fff"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -138,7 +137,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -177,5 +176,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/card_background_style"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/Banner_id"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent" />
+
 
 </android.support.constraint.motion.MotionLayout>

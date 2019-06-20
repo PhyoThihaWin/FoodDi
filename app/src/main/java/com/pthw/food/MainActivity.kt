@@ -2,7 +2,6 @@ package com.pthw.food
 
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -19,6 +18,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.developer.pthw.retrofittest.Api.Api
 import com.developer.pthw.retrofittest.Api.ApiClient
+import com.google.android.gms.ads.*
 import com.pthw.food.adapter.ItemAdapter
 import com.pthw.food.model.Food
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,22 +34,98 @@ class MainActivity : AppCompatActivity() {
     val api: Api = ApiClient.client.create(Api::class.java)
 
     lateinit var itemAdapter: ItemAdapter
-    var foodList: List<Food>? = null
+    lateinit var foodList: List<Food>
 
-    var lang: String? = null
-    lateinit var sharedPreference: SharedPreferences
+    lateinit var lang: String
+    // lateinit var sharedPreference: SharedPreferences
+
+    //ads
+    lateinit var mAdView: AdView
+    private lateinit var mInterstitialAd: InterstitialAd
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        loading = ProgressDialog(this)
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) //--show keyboard without layout move up
+        loading = ProgressDialog(this, R.style.customizedAlert)
         loading.setCancelable(false)
 
         //--to check zawgyi unicode
-        sharedPreference = getSharedPreferences("myfile", Context.MODE_PRIVATE)
-        lang = sharedPreference.getString("language", "");
+        //--sharedPreference = getSharedPreferences("myfile", Context.MODE_PRIVATE)
+        lang = intent.getStringExtra("language")
+
+
+        MobileAds.initialize(this, getString(R.string.App_id)) //--load ads
+        //--ad banner
+        mAdView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+        mAdView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            override fun onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+                mAdView.loadAd(adRequest)
+            }
+        }
+
+        //--ad interstitial
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = getString(R.string.FullAd_id)
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            override fun onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            override fun onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+                mInterstitialAd.loadAd(AdRequest.Builder().build())
+            }
+        }
+
+
+
 
         recycler.setHasFixedSize(true)
         var mLayoutManager: LayoutManager = LinearLayoutManager(this)
@@ -57,12 +133,10 @@ class MainActivity : AppCompatActivity() {
 
         getFoods() //--recycler first bind from api
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) //--show keyboard without layout move up
-
         //--recycler start position
         imgSearch.setOnClickListener {
-            motionlayout.transitionToStart()
             recycler.smoothScrollToPosition(0)
+            motionlayout.transitionToStart()
         }
 
         fullMenu.setOnClickListener {
@@ -98,6 +172,11 @@ class MainActivity : AppCompatActivity() {
         imgDeleteSearch.setOnClickListener {
             etSearch.setText("")
         }
+
+        txtRetry.setOnClickListener {
+            mAdView.loadAd(adRequest)
+            getFoods()
+        }
     }
 
 
@@ -109,6 +188,7 @@ class MainActivity : AppCompatActivity() {
 
     fun getFoods() {
 
+        etSearch.setText("")//--clear text
         loading.show()
         foodList = emptyList()
 
@@ -116,23 +196,25 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<List<Food>> {
             override fun onResponse(call: Call<List<Food>>, response: Response<List<Food>>) {
                 showNoInternet(false) //--hide no connection layout
-                foodList = response.body()
+                foodList = response.body()!!
                 //displaying the string array into listview
-                itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                Log.i("ssss", response.body().toString())
+                itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                 recycler!!.adapter = itemAdapter
+                itemAdapter.notifyDataSetChanged()
 
-                getArray(foodList!!)
+                getArray(foodList)
 
-                loading!!.dismiss()
+                loading.dismiss()
             }
 
             override fun onFailure(call: Call<List<Food>>, t: Throwable) {
                 if (t is IOException) {
                     showNoInternet(true)
-                    itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                    itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                     recycler.adapter = itemAdapter
                 } else Log.i("Retrofit error", t.message)
-                loading!!.dismiss()
+                loading.dismiss()
 
             }
         })
@@ -147,28 +229,36 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<List<Food>> {
             override fun onResponse(call: Call<List<Food>>, response: Response<List<Food>>) {
                 showNoInternet(false) //--hide no connection layout
-                foodList = response.body()
+                foodList = response.body()!!
                 //displaying the string array into listview
-                itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                 recycler!!.adapter = itemAdapter
                 itemAdapter.notifyDataSetChanged()
 
-                loading!!.dismiss()
+                loading.dismiss()
             }
 
             override fun onFailure(call: Call<List<Food>>, t: Throwable) {
                 if (t is IOException) {
                     showNoInternet(true)
-                    itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                    itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                     recycler.adapter = itemAdapter
                 } else Log.i("Retrofit error", t.message)
-                loading!!.dismiss()
+                loading.dismiss()
 
             }
         })
     }
 
     fun getFilterItem(item: String) {
+
+        //--load interstitial ads
+        if (mInterstitialAd.isLoaded) {
+            mInterstitialAd.show()
+        } else {
+            Log.d("TAG", "The interstitial wasn't loaded yet.")
+        }
+
         etSearch.setText("")//--clear text
         loading.show()
         foodList = emptyList()
@@ -177,20 +267,20 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<List<Food>> {
             override fun onResponse(call: Call<List<Food>>, response: Response<List<Food>>) {
                 showNoInternet(false) //--hide no connection layout
-                foodList = response.body()
-                itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                foodList = response.body()!!
+                itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                 recycler!!.adapter = itemAdapter
-                loading!!.dismiss()
+                loading.dismiss()
             }
 
             override fun onFailure(call: Call<List<Food>>, t: Throwable) {
                 if (t is IOException) {
                     showNoInternet(true)
-                    itemAdapter = ItemAdapter(this@MainActivity, foodList!!)
+                    itemAdapter = ItemAdapter(this@MainActivity, foodList, lang)
                     recycler.adapter = itemAdapter
 
                 } else Log.i("Retrofit error", t.message)
-                loading!!.dismiss()
+                loading.dismiss()
 
             }
         })
@@ -219,9 +309,9 @@ class MainActivity : AppCompatActivity() {
                     str.set(k + 1, f.get(i).twoZ)
                 }
             }
-
             k += 2
         }
+
         //set adapter for autocomplete textview
         var adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, str)
         etSearch.setAdapter(adapter)
@@ -229,7 +319,7 @@ class MainActivity : AppCompatActivity() {
 
     fun showNoInternet(f: Boolean) {
         if (f) layout_connection.visibility = View.VISIBLE
-        else layout_connection.visibility = View.GONE
+        else layout_connection.visibility = View.INVISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -250,6 +340,8 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.meat).setTitle(R.string.meat)
                 menu.findItem(R.id.snack).setTitle(R.string.snack)
                 loading.setMessage(getString(R.string.data))
+                txtNoInternet.setText(R.string.connection)
+                txtRetry.setText(R.string.retry)
 
             }
             "zawgyi" -> {
@@ -261,6 +353,8 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.meat).setTitle(R.string.meatZ)
                 menu.findItem(R.id.snack).setTitle(R.string.snackZ)
                 loading.setMessage(getString(R.string.dataZ))
+                txtNoInternet.setText(R.string.connectionZ)
+                txtRetry.setText(R.string.retryZ)
             }
             else -> {
                 etSearch.setHint(R.string.searchE)
@@ -271,12 +365,15 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.meat).setTitle(R.string.meatE)
                 menu.findItem(R.id.snack).setTitle(R.string.snackE)
                 loading.setMessage(getString(R.string.dataE))
+                txtNoInternet.setText(R.string.connectionE)
+                txtRetry.setText(R.string.retryE)
             }
         }
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
         when (item!!.itemId) {
             R.id.all -> {
                 getFoods()
@@ -303,6 +400,7 @@ class MainActivity : AppCompatActivity() {
                 seasonal.setText(item.title)
             }
         }
+
         etSearch.hideKeyboard()
         return super.onOptionsItemSelected(item)
     }

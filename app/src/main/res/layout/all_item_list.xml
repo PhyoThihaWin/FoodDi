@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:layout_marginBottom="10dp"
     android:background="@drawable/card_background_style"
     android:elevation="1dp">
 
     <android.support.design.card.MaterialCardView
         android:id="@+id/card1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginLeft="26dp"
         android:layout_marginTop="24dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
@@ -24,17 +24,17 @@
 
         <ImageView
             android:id="@+id/img1"
-            android:layout_width="70dp"
-            android:layout_height="70dp" />
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
     </android.support.design.card.MaterialCardView>
 
     <android.support.design.card.MaterialCardView
         android:id="@+id/card2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,8 +43,8 @@
 
         <ImageView
             android:id="@+id/img2"
-            android:layout_width="70dp"
-            android:layout_height="70dp" />
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
     </android.support.design.card.MaterialCardView>
 
     <TextView
@@ -79,7 +79,7 @@
         android:text="Die"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/card2"
         app:layout_constraintStart_toEndOf="@+id/card1"

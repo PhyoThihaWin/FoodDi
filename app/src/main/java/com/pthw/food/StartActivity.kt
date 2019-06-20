@@ -29,22 +29,14 @@ class StartActivity : AppCompatActivity() {
     var lang: String? = null
 
     val api: Api = ApiClient.client.create(Api::class.java)
-    var loading: ProgressDialog? = null
-
-    var available: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
 
+
         sharedPreference = getSharedPreferences("myfile", Context.MODE_PRIVATE)
         lang = sharedPreference.getString("language", "")
-
-//        if (lang != "") {
-//            viewHide(true)
-//        } else {
-//            viewHide(false)
-//        }
 
         checkUpdate()
 
@@ -52,13 +44,19 @@ class StartActivity : AppCompatActivity() {
             var editor = sharedPreference.edit()
             editor.putString("language", "unicode")
             editor.commit()
-            startActivity(Intent(this, MainActivity::class.java))
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("language", "unicode")
+            startActivity(intent)
         }
         btnZawgyi.setOnClickListener {
             var editor = sharedPreference.edit()
             editor.putString("language", "zawgyi")
             editor.commit()
-            startActivity(Intent(this, MainActivity::class.java))
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("language", "zawgyi")
+            startActivity(intent)
         }
     }
 
@@ -70,13 +68,16 @@ class StartActivity : AppCompatActivity() {
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
 
-                if (response.body().equals("n") && lang != "")
-                    startActivity(Intent(this@StartActivity, MainActivity::class.java))
-                else if (response.body().equals("y"))
+                if (response.body().equals("n") && lang != "") {
+                    val intent = Intent(this@StartActivity, MainActivity::class.java)
+                    intent.putExtra("language", lang)
+                    startActivity(intent)
+                    finish()
+                } else if (response.body().equals("y"))
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
-                            Uri.parse("https://play.google.com/store/apps/details?id=com.tencent.ig&hl=en")
+                            Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)
                         )
                     )
                 else viewHide(false)
@@ -87,16 +88,16 @@ class StartActivity : AppCompatActivity() {
             override fun onFailure(call: Call<String>, t: Throwable) {
                 progress_circular.visibility = View.INVISIBLE
                 if (t is IOException) {
-                    var str: String? = null
+                    var str: String
                     if (t is IOException)
-                        str = "No Internet Connection!"
+                        str = "No Internet Connection!                                      "
                     else str = "Something went wrong"
 
-                    val dialogBuilder = AlertDialog.Builder(this@StartActivity)
+                    val dialogBuilder = AlertDialog.Builder(this@StartActivity, R.style.customizedAlert)
                     dialogBuilder.setMessage(str).setCancelable(false)
-                        .setPositiveButton("Retry", DialogInterface.OnClickListener { dialog, id ->
+                        .setPositiveButton("Retry") { dialog, id ->
                             checkUpdate() //--recall chekupdate function to reconnect
-                        }).create().show()
+                        }.create().show()
                 } else Log.i("Retrofit error", t.message)
                 viewHide(true)
             }

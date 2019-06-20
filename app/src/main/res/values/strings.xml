@@ -1,12 +1,13 @@
 <resources>
-    <string name="app_name">Di Food</string>
-    <string name="eat">Food should not eat together</string>
+    <string name="app_name">FoodDi</string>
+    <string name="eat">Food that should not eat together</string>
     <string name="see">အမှန်မြင်ရသည်</string>
     <string name="search">အစားအစာရှာရန်</string>
     <string name="setting">ပြင်ဆင်ချက်များ</string>
     <string name="chooseLanguage">ဘာသာစကားရွေးရန်</string>
     <string name="newFood">အစားစာ အသစ်</string>
     <string name="aboutApp">ဆော့ဝဲလ်အကြောင်း</string>
+    <string name="moreApp">အခြားဆော့၀ဲလ်များ</string>
     <string name="all">အားလုံး</string>
     <string name="food">အစားသောက်များ</string>
     <string name="fruit">သစ်သီးများ</string>
@@ -18,12 +19,14 @@
     <string name="connection">အင်တာနက်ချိတ်ဆက်မှုမရှိပါ</string>
     <string name="retry">ထပ်စစ်ရန်</string>
 
+
     <string name="seeZ">အမွန္ျမင္ရသည္</string>
     <string name="searchZ">အစားအစာ႐ွာရန္</string>
     <string name="settingZ">ျပင္ဆင္ခ်က္မ်ား</string>
     <string name="chooseLanguageZ">ဘာသာစကားေရြးရန္</string>
     <string name="newFoodZ">အစားစာ အသစ္</string>
     <string name="aboutAppZ">ေဆာ့ဝဲလ္အေၾကာင္း</string>
+    <string name="moreAppZ">အျခားေဆာ့၀ဲလ္မ်ား</string>
     <string name="allZ">အားလံုး</string>
     <string name="foodZ">အစားေသာက္မ်ား</string>
     <string name="fruitZ">သစ္သီးမ်ား</string>
@@ -41,6 +44,7 @@
     <string name="chooseLanguageE">Choose Language</string>
     <string name="newFoodE">Add new food</string>
     <string name="aboutAppE">About App</string>
+    <string name="moreAppE">More Applications</string>
     <string name="allE">All</string>
     <string name="foodE">Foods</string>
     <string name="fruitE">Fruits</string>
@@ -52,4 +56,7 @@
     <string name="connectionE">No Internet Connection</string>
     <string name="retryE">Retry</string>
 
+    <string name="App_id">ca-app-pub-1912473277854219~7278044086</string>
+    <string name="Banner_id">ca-app-pub-1912473277854219/5649321545</string>
+    <string name="FullAd_id">ca-app-pub-1912473277854219/6949320142</string>
 </resources>
