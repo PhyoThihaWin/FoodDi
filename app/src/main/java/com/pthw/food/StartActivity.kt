@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.developer.pthw.retrofittest.Api.Api
 import com.developer.pthw.retrofittest.Api.ApiClient
@@ -48,6 +49,7 @@ class StartActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("language", "unicode")
             startActivity(intent)
+            finish()
         }
         btnZawgyi.setOnClickListener {
             var editor = sharedPreference.edit()
@@ -57,6 +59,7 @@ class StartActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("language", "zawgyi")
             startActivity(intent)
+            finish()
         }
     }
 
@@ -109,8 +112,14 @@ class StartActivity : AppCompatActivity() {
             linearLayout2.visibility = View.INVISIBLE
             cc.visibility = View.INVISIBLE
         } else {
+
+            val animation = AnimationUtils.loadAnimation(this@StartActivity, R.anim.dialog_enter)
+
             linearLayout2.visibility = View.VISIBLE
             cc.visibility = View.VISIBLE
+
+            linearLayout2.startAnimation(animation)
+            cc.startAnimation(animation)
         }
     }
 

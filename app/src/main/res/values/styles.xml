@@ -30,8 +30,13 @@
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
+    <style name="AlertDialogAnim">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+    </style>
+
     <style name="customizedAlert" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowBackground">@drawable/dialog_round</item>
+        <item name="android:windowAnimationStyle">@style/AlertDialogAnim</item>
     </style>
     ,
 </resources>

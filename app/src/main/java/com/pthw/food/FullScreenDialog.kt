@@ -33,7 +33,7 @@ class FullScreenDialog : DialogFragment() {
 
     //ads
     lateinit var mAdView: AdView
-    private lateinit var mInterstitialAd: InterstitialAd
+    //private lateinit var mInterstitialAd: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +49,7 @@ class FullScreenDialog : DialogFragment() {
 
         view.toolbar.setNavigationIcon(R.drawable.ic_close_white)
         view.toolbar.setNavigationOnClickListener { dismiss() }
+        view.toolbar.setTitleTextColor(resources.getColor(R.color.colorPrimary))
         setLanguage(view, lang!!)
 
         MobileAds.initialize(context, getString(R.string.App_id)) //--load ads
