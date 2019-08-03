@@ -1,8 +1,6 @@
 package com.pthw.food
 
-import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -12,13 +10,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import com.developer.pthw.retrofittest.Api.Api
 import com.developer.pthw.retrofittest.Api.ApiClient
-import com.pthw.food.adapter.ItemAdapter
-import com.pthw.food.model.Food
 import kotlinx.android.synthetic.main.activity_start.*
-import kotlinx.android.synthetic.main.recycler_content.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,25 +61,29 @@ class StartActivity : AppCompatActivity() {
 
         progress_circular.visibility = View.VISIBLE
 
-        val call = api.checkUpdate("update")
+        val call = api.checkUpdate("version")
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
 
-                if (response.body().equals("n") && lang != "") {
+                if (response.body().equals(BuildConfig.VERSION_NAME) && lang != "") {
                     val intent = Intent(this@StartActivity, MainActivity::class.java)
                     intent.putExtra("language", lang)
                     startActivity(intent)
                     finish()
-                } else if (response.body().equals("y"))
+                } else if (!response.body().equals(BuildConfig.VERSION_NAME)) {
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)
                         )
                     )
-                else viewHide(false)
-                //loading!!.dismiss()
-                progress_circular.visibility = View.INVISIBLE
+                    progress_circular.visibility = View.INVISIBLE
+                } else {
+                    progress_circular.visibility = View.INVISIBLE
+                    viewHide(false)
+                }
+
+
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

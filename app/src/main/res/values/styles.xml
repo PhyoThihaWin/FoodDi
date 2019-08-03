@@ -38,5 +38,5 @@
         <item name="android:windowBackground">@drawable/dialog_round</item>
         <item name="android:windowAnimationStyle">@style/AlertDialogAnim</item>
     </style>
-    ,
+
 </resources>

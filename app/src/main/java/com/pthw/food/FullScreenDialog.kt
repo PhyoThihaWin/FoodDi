@@ -91,15 +91,28 @@ class FullScreenDialog : DialogFragment() {
             val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context!!, R.style.customizedAlert)
             alertDialogBuilder.setItems(language) { dialog, which ->
                 var editor = sharedPreference.edit()
+                var temp: String = ""
                 when (which) {
-                    0 -> editor.putString("language", "zawgyi")
-                    1 -> editor.putString("language", "unicode")
-                    2 -> editor.putString("language", "english")
+                    0 -> {
+                        editor.putString("language", "zawgyi")
+                        temp = "zawgyi"
+                    }
+                    1 -> {
+                        editor.putString("language", "unicode")
+                        temp = "unicode"
+                    }
+                    2 -> {
+                        editor.putString("language", "english")
+                        temp = "english"
+                    }
                 }
                 editor.commit()
-                dismiss()
-                activity!!.finish()
-                startActivity(Intent(activity, StartActivity::class.java))
+                dialog.dismiss()
+                //--check for same language
+                if (!lang.equals(temp)) {
+                    activity!!.finish()
+                    startActivity(Intent(activity, StartActivity::class.java))
+                }
 
 
             }

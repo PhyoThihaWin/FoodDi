@@ -30,6 +30,8 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
+    val TAG = "Noti"
+
     lateinit var loading: ProgressDialog
     val api: Api = ApiClient.client.create(Api::class.java)
 
@@ -177,6 +179,7 @@ class MainActivity : AppCompatActivity() {
             mAdView.loadAd(adRequest)
             getFoods()
         }
+
     }
 
 
