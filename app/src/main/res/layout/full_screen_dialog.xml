@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,23 +15,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:elevation="4dp">
 
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <!--<ImageView-->
-    <!--android:id="@+id/img"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="100dp"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--android:src="@drawable/ic_launcher_background"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/appbar" />-->
 
     <TextView
         android:id="@+id/txtChooseLanguage"
@@ -50,26 +43,8 @@
         android:text="Choose Language"
         android:textColor="@color/header"
         android:textSize="18dp"
-        app:layout_constraintTop_toBottomOf="@+id/adView" />
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
-    <TextView
-        android:id="@+id/txtAddFood"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:clickable="true"
-        android:drawableLeft="@drawable/ic_add"
-        android:drawablePadding="24dp"
-        android:fontFamily="sans-serif"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:paddingLeft="32dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:text="Add Di Food"
-        android:textColor="@color/header"
-        android:textSize="18dp"
-        app:layout_constraintTop_toBottomOf="@+id/txtChooseLanguage" />
 
     <TextView
         android:id="@+id/txtAboutApp"
@@ -88,7 +63,7 @@
         android:text="About App"
         android:textColor="@color/header"
         android:textSize="18dp"
-        app:layout_constraintTop_toBottomOf="@+id/txtAddFood" />
+        app:layout_constraintTop_toBottomOf="@+id/txtChooseLanguage" />
 
 
     <TextView
@@ -110,15 +85,14 @@
         android:textSize="18dp"
         app:layout_constraintTop_toBottomOf="@+id/txtAboutApp" />
 
-    <LinearLayout
+    <View
         android:layout_width="8dp"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/txtMoreApp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtMoreApp">
+        app:layout_constraintTop_toTopOf="@+id/txtMoreApp" />
 
-    </LinearLayout>
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
@@ -127,10 +101,11 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/card_background_style"
-        ads:adSize="LARGE_BANNER"
+        ads:adSize="MEDIUM_RECTANGLE"
         ads:adUnitId="@string/Banner_id"
+        ads:layout_constraintBottom_toBottomOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toBottomOf="@+id/appbar" />
+        ads:layout_constraintTop_toBottomOf="@+id/txtMoreApp" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

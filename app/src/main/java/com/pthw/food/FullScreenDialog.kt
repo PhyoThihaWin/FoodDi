@@ -1,21 +1,22 @@
 package com.pthw.food
 
-import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.developer.pthw.retrofittest.Api.ApiClient
-import com.google.android.gms.ads.*
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+import com.pthw.food.activity.StartActivity
+import com.pthw.food.utils.ConstantValue
+import com.pthw.food.utils.PrefManager
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.full_screen_dialog.view.*
 
@@ -25,126 +26,60 @@ class FullScreenDialog : DialogFragment() {
 
     companion object {
         var TAG = "FullScreenDialog"
-        var language = arrayOf("Zawgyi", "Unicode", "English")
-        lateinit var sharedPreference: SharedPreferences
     }
 
-    var lang: String? = null
-
-    //ads
+    var languageArr = emptyArray<String>()
     lateinit var mAdView: AdView
-    //private lateinit var mInterstitialAd: InterstitialAd
+    lateinit var prefManager: PrefManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle)
+        setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.full_screen_dialog, container, false)
-
-        sharedPreference = context!!.getSharedPreferences("myfile", Context.MODE_PRIVATE)
-        lang = sharedPreference.getString("language", "")
 
         view.toolbar.setNavigationIcon(R.drawable.ic_close_white)
         view.toolbar.setNavigationOnClickListener { dismiss() }
         view.toolbar.setTitleTextColor(resources.getColor(R.color.colorPrimary))
-        setLanguage(view, lang!!)
 
-        MobileAds.initialize(context, getString(R.string.App_id)) //--load ads
-        //--ad banner
-        mAdView = view.findViewById(R.id.adView)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
-        mAdView.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
+        prefManager = PrefManager(context!!)
 
-            override fun onAdFailedToLoad(errorCode: Int) {
-                // Code to be executed when an ad request fails.
-            }
+        setLanguage(view, ConstantValue.lang)
 
-            override fun onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
-            }
-
-            override fun onAdClicked() {
-                // Code to be executed when the user clicks on an ad.
-            }
-
-            override fun onAdLeftApplication() {
-                // Code to be executed when the user has left the app.
-            }
-
-            override fun onAdClosed() {
-                mAdView.loadAd(adRequest)
-            }
+        languageArr = when (ConstantValue.lang) {
+            "unicode" -> activity!!.resources.getStringArray(R.array.languageUni)
+            "zawgyi" -> activity!!.resources.getStringArray(R.array.languageZaw)
+            else -> activity!!.resources.getStringArray(R.array.languageEn)
         }
 
-        view.txtChooseLanguage.setOnClickListener {
-
-            // loadAds()
-
-            val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context!!, R.style.customizedAlert)
-            alertDialogBuilder.setItems(language) { dialog, which ->
-                var editor = sharedPreference.edit()
-                var temp: String = ""
-                when (which) {
-                    0 -> {
-                        editor.putString("language", "zawgyi")
-                        temp = "zawgyi"
-                    }
-                    1 -> {
-                        editor.putString("language", "unicode")
-                        temp = "unicode"
-                    }
-                    2 -> {
-                        editor.putString("language", "english")
-                        temp = "english"
-                    }
-                }
-                editor.commit()
-                dialog.dismiss()
-                //--check for same language
-                if (!lang.equals(temp)) {
-                    activity!!.finish()
-                    startActivity(Intent(activity, StartActivity::class.java))
-                }
+        setupGoogleAd(view)
 
 
-            }
-            alertDialogBuilder.show()
+        view.txtChooseLanguage.setOnClickListener { showLangDialog() }
 
-        }
-
-        view.txtAddFood.setOnClickListener {
-            Toast.makeText(context, "Coming soon feature !", Toast.LENGTH_SHORT).show()
-        }
 
         view.txtAboutApp.setOnClickListener {
-
-            //---cusotm round dialog
-
             val mDialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
-            //AlertDialogBuilder
-            val mBuilder = AlertDialog.Builder(context!!, R.style.customizedAlert)
-                .setView(mDialogView)
-            Glide.with(context!!).load(ApiClient.BASE_URL + "fbad.png")
-                .apply(RequestOptions().placeholder(R.drawable.logoblack))
-                .into(mDialogView.img)
-            //show dialog
+            val mBuilder =
+                AlertDialog.Builder(context!!, R.style.customizedAlert).setView(mDialogView)
+            Picasso.get().load(R.drawable.fbad).fit().centerCrop()
+                .placeholder(R.drawable.logoblack).into(mDialogView.img)
             mBuilder.show()
-
         }
 
         view.txtMoreApp.setOnClickListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/developer?id=MIN+HTOO+TINT+AUNG")
+                    Uri.parse("https://play.google.com/store/apps/dev?id=5729357381500909341")
                 )
             )
         }
@@ -152,14 +87,40 @@ class FullScreenDialog : DialogFragment() {
         return view
     }
 
-//    fun loadAds() {
-//        //--load interstitial ads
-//        if (mInterstitialAd.isLoaded) {
-//            mInterstitialAd.show()
-//        } else {
-//            Log.d("TAG", "The interstitial wasn't loaded yet.")
-//        }
-//    }
+    private fun setupGoogleAd(view: View) {
+        MobileAds.initialize(context, getString(R.string.App_id)) //--load ads
+        //--ad banner
+        mAdView = view.findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+    }
+
+
+    private fun showLangDialog() {
+        val checkItem = when (ConstantValue.lang) {
+            "zawgyi" -> 2
+            "unicode" -> 1
+            else -> 0
+        }
+        val builder = AlertDialog.Builder(context!!, R.style.customizedAlert)
+
+        builder.setSingleChoiceItems(
+            ArrayAdapter(context!!, R.layout.rtl_radio_item, languageArr), checkItem
+        ) { dialogInterface: DialogInterface, i: Int ->
+            when (i) {
+                0 -> prefManager.setLanguage("english")
+                1 -> prefManager.setLanguage("unicode")
+                2 -> prefManager.setLanguage("zawgyi")
+            }
+
+            if (checkItem != i) {
+                dialogInterface.dismiss()
+                activity!!.finish()
+                startActivity(Intent(activity, StartActivity::class.java))
+            } else dialogInterface.dismiss()
+        }
+        builder.show()
+    }
 
 
     fun setLanguage(view: View, lang: String) {
@@ -167,21 +128,18 @@ class FullScreenDialog : DialogFragment() {
             "unicode" -> {
                 view.toolbar.setTitle(R.string.setting)
                 view.txtChooseLanguage.setText(R.string.chooseLanguage)
-                view.txtAddFood.setText(R.string.newFood)
                 view.txtAboutApp.setText(R.string.aboutApp)
                 view.txtMoreApp.setText(R.string.moreApp)
             }
             "zawgyi" -> {
                 view.toolbar.setTitle(R.string.settingZ)
                 view.txtChooseLanguage.setText(R.string.chooseLanguageZ)
-                view.txtAddFood.setText(R.string.newFoodZ)
                 view.txtAboutApp.setText(R.string.aboutAppZ)
                 view.txtMoreApp.setText(R.string.moreAppZ)
             }
             else -> {
                 view.toolbar.setTitle(R.string.settingE)
                 view.txtChooseLanguage.setText(R.string.chooseLanguageE)
-                view.txtAddFood.setText(R.string.newFoodE)
                 view.txtAboutApp.setText(R.string.aboutAppE)
                 view.txtMoreApp.setText(R.string.moreAppE)
             }

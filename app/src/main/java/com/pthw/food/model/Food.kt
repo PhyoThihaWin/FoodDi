@@ -1,6 +1,38 @@
 package com.pthw.food.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "Food")
 data class Food(
-    val oneMM: String, val twoMM: String, val dieMM: String, val oneEN: String, val twoEN: String, val dieEN: String,
-    val type: String, val imgOne: String, val imgTwo: String, val oneZ: String, val twoZ: String, val dieZ: String
+    @PrimaryKey @ColumnInfo(name = "id")
+    val id: Int,
+
+    @ColumnInfo(name = "oneMM")
+    val oneMM: String,
+
+    @ColumnInfo(name = "twoMM")
+    val twoMM: String,
+
+    @ColumnInfo(name = "dieMM")
+    val dieMM: String,
+
+    @ColumnInfo(name = "oneEN")
+    val oneEN: String,
+
+    @ColumnInfo(name = "twoEN")
+    val twoEN: String,
+
+    @ColumnInfo(name = "dieEN")
+    val dieEN: String,
+
+    @ColumnInfo(name = "type")
+    val type: String,
+
+    @ColumnInfo(name = "imgOne")
+    val imgOne: String,
+
+    @ColumnInfo(name = "imgTwo")
+    val imgTwo: String
 )

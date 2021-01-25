@@ -1,4 +1,4 @@
-package com.pthw.food;
+package com.pthw.food.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -6,10 +6,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.pthw.food.R;
 
 import java.util.Map;
 import java.util.Random;

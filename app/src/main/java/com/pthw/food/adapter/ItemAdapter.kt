@@ -1,19 +1,19 @@
 package com.pthw.food.adapter
 
-import android.content.Context
-import android.support.v7.widget.RecyclerView
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.developer.pthw.retrofittest.Api.ApiClient
+import androidx.recyclerview.widget.RecyclerView
 import com.pthw.food.R
 import com.pthw.food.model.Food
+import com.pthw.food.utils.ConstantValue
+import com.pthw.food.utils.Rabbit
+import com.squareup.picasso.Picasso
 
-class ItemAdapter(var context: Context, var foodList: List<Food>, var lang: String) :
+class ItemAdapter(val context: Activity, val foodList: List<Food>, var lang: String) :
     RecyclerView.Adapter<ItemAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MyViewHolder {
@@ -24,44 +24,36 @@ class ItemAdapter(var context: Context, var foodList: List<Food>, var lang: Stri
     }
 
     override fun onBindViewHolder(myViewHolder: MyViewHolder, i: Int) {
-        val food = foodList.get(i)
+        val food = foodList[i]
 
         when (lang) {
             "unicode" -> {
-                myViewHolder.txtOne.setText(food.oneMM)
-                myViewHolder.txtTwo.setText(food.twoMM)
-                myViewHolder.txtDie.setText(food.dieMM)
+                myViewHolder.txtOne.text = food.oneMM
+                myViewHolder.txtTwo.text = food.twoMM
+                myViewHolder.txtDie.text = food.dieMM
             }
             "zawgyi" -> {
-                myViewHolder.txtOne.setText(food.oneZ)
-                myViewHolder.txtTwo.setText(food.twoZ)
-                myViewHolder.txtDie.setText(food.dieZ)
+                myViewHolder.txtOne.text = Rabbit.uni2zg(food.oneMM)
+                myViewHolder.txtTwo.text = Rabbit.uni2zg(food.twoMM)
+                myViewHolder.txtDie.text = Rabbit.uni2zg(food.dieMM)
             }
             else -> {
-                myViewHolder.txtOne.setText(food.oneEN)
-                myViewHolder.txtTwo.setText(food.twoEN)
-                myViewHolder.txtDie.setText(food.dieEN)
+                myViewHolder.txtOne.text = food.oneEN
+                myViewHolder.txtTwo.text = food.twoEN
+                myViewHolder.txtDie.text = food.dieEN
             }
         }
 
-        Glide.with(context)
-            .load(ApiClient.BASE_URL + "/DiFood_photo/" + food.imgOne)
-            .apply(
-                RequestOptions()
-                    .override(700, 444)
-                    .dontAnimate()
-                    .placeholder(R.drawable.logoblack)
 
-            ).into(myViewHolder.img1)
 
-        Glide.with(context)
-            .load(ApiClient.BASE_URL + "/DiFood_photo/" + food.imgTwo)
-            .apply(
-                RequestOptions()
-                    .override(700, 444)
-                    .dontAnimate()
-                    .placeholder(R.drawable.logoblack)
-            ).into(myViewHolder.img2);
+        Picasso.get().load(ConstantValue.path + food.imgOne)
+            .fit().centerInside().placeholder(R.drawable.logoblack)
+            .into(myViewHolder.img1)
+
+
+        Picasso.get().load(ConstantValue.path + food.imgTwo)
+            .fit().centerInside().placeholder(R.drawable.logoblack)
+            .into(myViewHolder.img2)
 
     }
 
@@ -75,20 +67,11 @@ class ItemAdapter(var context: Context, var foodList: List<Food>, var lang: Stri
 
     class MyViewHolder
         (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtOne: TextView
-        var txtTwo: TextView
-        var txtDie: TextView
-        var img1: ImageView
-        var img2: ImageView
-
-        init {
-
-            txtOne = itemView.findViewById(R.id.txtOne)
-            txtTwo = itemView.findViewById(R.id.txtTwo)
-            txtDie = itemView.findViewById(R.id.txtDie)
-            img1 = itemView.findViewById(R.id.img1)
-            img2 = itemView.findViewById(R.id.img2)
-
-        }
+        var txtOne: TextView = itemView.findViewById(R.id.txtOne)
+        var txtTwo: TextView = itemView.findViewById(R.id.txtTwo)
+        var txtDie: TextView = itemView.findViewById(R.id.txtDie)
+        var img1: ImageView = itemView.findViewById(R.id.img1)
+        var img2: ImageView = itemView.findViewById(R.id.img2)
     }
+
 }

@@ -5,9 +5,8 @@
     <string name="search">အစားအစာရှာရန်</string>
     <string name="setting">ပြင်ဆင်ချက်များ</string>
     <string name="chooseLanguage">ဘာသာစကားရွေးရန်</string>
-    <string name="newFood">အစားစာ အသစ်</string>
     <string name="aboutApp">ဆော့ဝဲလ်အကြောင်း</string>
-    <string name="moreApp">အခြားဆော့၀ဲလ်များ</string>
+    <string name="moreApp">အခြားဆော့ဝဲလ်များ</string>
     <string name="all">အားလုံး</string>
     <string name="food">အစားသောက်များ</string>
     <string name="fruit">သစ်သီးများ</string>
@@ -16,17 +15,22 @@
     <string name="snack">သရေစာများ</string>
     <string name="wait">ခေတ္တစောင့်ဆိုင်းပေးပါ</string>
     <string name="data">အချက်အလက်များရယူနေပါတယ်</string>
-    <string name="connection">အင်တာနက်ချိတ်ဆက်မှုမရှိပါ</string>
+    <string name="connection">&#128246; အင်တာနက်ချိတ်ဆက်မှုမရှိပါ</string>
     <string name="retry">ထပ်စစ်ရန်</string>
+    <string-array name="languageUni">
+        <item>&#127482;&#127480;\ \ \ \ \ \ အင်္ဂလိပ်</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ မြန်မာယူနီကုဒ်</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ မြန်မာဇော်ဂျီ</item>
+    </string-array>
+
 
 
     <string name="seeZ">အမွန္ျမင္ရသည္</string>
     <string name="searchZ">အစားအစာ႐ွာရန္</string>
     <string name="settingZ">ျပင္ဆင္ခ်က္မ်ား</string>
     <string name="chooseLanguageZ">ဘာသာစကားေရြးရန္</string>
-    <string name="newFoodZ">အစားစာ အသစ္</string>
     <string name="aboutAppZ">ေဆာ့ဝဲလ္အေၾကာင္း</string>
-    <string name="moreAppZ">အျခားေဆာ့၀ဲလ္မ်ား</string>
+    <string name="moreAppZ">အျခားေဆာ့ဝဲလ္မ်ား</string>
     <string name="allZ">အားလံုး</string>
     <string name="foodZ">အစားေသာက္မ်ား</string>
     <string name="fruitZ">သစ္သီးမ်ား</string>
@@ -37,12 +41,18 @@
     <string name="dataZ">အခ်က္အလက္မ်ားရယူေနပါတယ္</string>
     <string name="connectionZ">အင္တာနက္ခ်ိတ္ဆက္မႈမ႐ွိပါ</string>
     <string name="retryZ">ထပ္စစ္ရန္</string>
+    <string-array name="languageZaw">
+        <item>&#127482;&#127480;\ \ \ \ \ \ အဂၤလိပ္</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ ျမန္မာယူနီကုဒ္</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ ျမန္မာေဇာ္ဂ်ီ</item>
+    </string-array>
+
+
 
     <string name="seeE">English</string>
     <string name="searchE">Search..</string>
     <string name="settingE">Setting</string>
     <string name="chooseLanguageE">Choose Language</string>
-    <string name="newFoodE">Add new food</string>
     <string name="aboutAppE">About App</string>
     <string name="moreAppE">More Applications</string>
     <string name="allE">All</string>
@@ -53,8 +63,18 @@
     <string name="snackE">Snacks</string>
     <string name="waitE">Please wait</string>
     <string name="dataE">Retrieving data</string>
-    <string name="connectionE">No Internet Connection</string>
+    <string name="connectionE">&#128246; No Internet Connection</string>
     <string name="retryE">Retry</string>
+    <string name="forwardE">Skip</string>
+    <string-array name="languageEn">
+        <item>&#127482;&#127480;\ \ \ \ \ \ English</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ Myanmar (Unicode)</item>
+        <item>&#127474;&#127474;\ \ \ \ \ \ Myanmar (Zawgyi)</item>
+    </string-array>
+
+
+    <string name="new_version">&#128276; New software version is available.</string>
+    <string name="forward">Skip</string>
 
 
     <string name="channel_name">Notifications</string>
@@ -63,4 +83,8 @@
     <string name="App_id">ca-app-pub-1912473277854219~7278044086</string>
     <string name="Banner_id">ca-app-pub-1912473277854219/5054235225</string>
     <string name="FullAd_id">ca-app-pub-1912473277854219/2675483894</string>
+
+    <!--test ad-->
+<!--     <string name="Banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
+<!--     <string name="FullAd_id">ca-app-pub-3940256099942544/1033173712</string>-->
 </resources>
