@@ -9,20 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.pthw.food.activity.StartActivity
+import com.pthw.food.base.BaseDialogFragment
+import com.pthw.food.databinding.CustomDialogBinding
+import com.pthw.food.databinding.FullScreenDialogBinding
 import com.pthw.food.utils.ConstantValue
 import com.pthw.food.utils.PrefManager
+import com.pthw.food.utils.inflater
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.custom_dialog.view.*
-import kotlinx.android.synthetic.main.full_screen_dialog.view.*
 
 
-class FullScreenDialog : DialogFragment() {
-
+class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
+    override fun bindView(inflater: LayoutInflater): FullScreenDialogBinding {
+        return FullScreenDialogBinding.inflate(inflater)
+    }
 
     companion object {
         var TAG = "FullScreenDialog"
@@ -38,17 +41,12 @@ class FullScreenDialog : DialogFragment() {
         setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.full_screen_dialog, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        view.toolbar.setNavigationIcon(R.drawable.ic_close_white)
-        view.toolbar.setNavigationOnClickListener { dismiss() }
-        view.toolbar.setTitleTextColor(resources.getColor(R.color.colorPrimary))
+        binding.toolbar.setNavigationIcon(R.drawable.ic_close_white)
+        binding.toolbar.setNavigationOnClickListener { dismiss() }
+        binding.toolbar.setTitleTextColor(resources.getColor(R.color.colorPrimary))
 
         prefManager = PrefManager(context!!)
 
@@ -63,19 +61,21 @@ class FullScreenDialog : DialogFragment() {
         setupGoogleAd(view)
 
 
-        view.txtChooseLanguage.setOnClickListener { showLangDialog() }
+        binding.txtChooseLanguage.setOnClickListener { showLangDialog() }
 
 
-        view.txtAboutApp.setOnClickListener {
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
-            val mBuilder =
-                AlertDialog.Builder(context!!, R.style.customizedAlert).setView(mDialogView)
-            Picasso.get().load(R.drawable.fbad).fit().centerCrop()
-                .placeholder(R.drawable.logoblack).into(mDialogView.img)
+        binding.txtAboutApp.setOnClickListener {
+            val mDialogBinding = CustomDialogBinding.inflate(mContext.inflater())
+            val mBuilder = AlertDialog.Builder(mContext, R.style.customizedAlert)
+            mBuilder.setView(mDialogBinding.root)
+            Picasso.get()
+                .load(R.drawable.fbad).fit().centerCrop()
+                .placeholder(R.drawable.logoblack)
+                .into(mDialogBinding.img)
             mBuilder.show()
         }
 
-        view.txtMoreApp.setOnClickListener {
+        binding.txtMoreApp.setOnClickListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -83,12 +83,10 @@ class FullScreenDialog : DialogFragment() {
                 )
             )
         }
-
-        return view
     }
 
+
     private fun setupGoogleAd(view: View) {
-        MobileAds.initialize(context, getString(R.string.App_id)) //--load ads
         //--ad banner
         mAdView = view.findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
@@ -126,22 +124,24 @@ class FullScreenDialog : DialogFragment() {
     fun setLanguage(view: View, lang: String) {
         when (lang) {
             "unicode" -> {
-                view.toolbar.setTitle(R.string.setting)
-                view.txtChooseLanguage.setText(R.string.chooseLanguage)
-                view.txtAboutApp.setText(R.string.aboutApp)
-                view.txtMoreApp.setText(R.string.moreApp)
+                binding.toolbar.setTitle(R.string.setting)
+                binding.txtChooseLanguage.setText(R.string.chooseLanguage)
+                binding.txtAboutApp.setText(R.string.aboutApp)
+                binding.txtMoreApp.setText(R.string.moreApp)
             }
+
             "zawgyi" -> {
-                view.toolbar.setTitle(R.string.settingZ)
-                view.txtChooseLanguage.setText(R.string.chooseLanguageZ)
-                view.txtAboutApp.setText(R.string.aboutAppZ)
-                view.txtMoreApp.setText(R.string.moreAppZ)
+                binding.toolbar.setTitle(R.string.settingZ)
+                binding.txtChooseLanguage.setText(R.string.chooseLanguageZ)
+                binding.txtAboutApp.setText(R.string.aboutAppZ)
+                binding.txtMoreApp.setText(R.string.moreAppZ)
             }
+
             else -> {
-                view.toolbar.setTitle(R.string.settingE)
-                view.txtChooseLanguage.setText(R.string.chooseLanguageE)
-                view.txtAboutApp.setText(R.string.aboutAppE)
-                view.txtMoreApp.setText(R.string.moreAppE)
+                binding.toolbar.setTitle(R.string.settingE)
+                binding.txtChooseLanguage.setText(R.string.chooseLanguageE)
+                binding.txtAboutApp.setText(R.string.aboutAppE)
+                binding.txtMoreApp.setText(R.string.moreAppE)
             }
         }
     }

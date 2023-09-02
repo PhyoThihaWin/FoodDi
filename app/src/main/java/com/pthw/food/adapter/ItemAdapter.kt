@@ -1,20 +1,25 @@
 package com.pthw.food.adapter
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.pthw.food.R
 import com.pthw.food.model.Food
-import com.pthw.food.utils.ConstantValue
 import com.pthw.food.utils.Rabbit
-import com.squareup.picasso.Picasso
+import com.pthw.food.utils.loadIntoPicasso
 
-class ItemAdapter(val context: Activity, val foodList: List<Food>, var lang: String) :
+class ItemAdapter(val foodList: List<Food>, var lang: String) :
     RecyclerView.Adapter<ItemAdapter.MyViewHolder>() {
+
+    companion object {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MyViewHolder {
         val itemView = LayoutInflater.from(viewGroup.context)
@@ -32,11 +37,13 @@ class ItemAdapter(val context: Activity, val foodList: List<Food>, var lang: Str
                 myViewHolder.txtTwo.text = food.twoMM
                 myViewHolder.txtDie.text = food.dieMM
             }
+
             "zawgyi" -> {
                 myViewHolder.txtOne.text = Rabbit.uni2zg(food.oneMM)
                 myViewHolder.txtTwo.text = Rabbit.uni2zg(food.twoMM)
                 myViewHolder.txtDie.text = Rabbit.uni2zg(food.dieMM)
             }
+
             else -> {
                 myViewHolder.txtOne.text = food.oneEN
                 myViewHolder.txtTwo.text = food.twoEN
@@ -45,15 +52,10 @@ class ItemAdapter(val context: Activity, val foodList: List<Food>, var lang: Str
         }
 
 
-
-        Picasso.get().load(ConstantValue.path + food.imgOne)
-            .fit().centerInside().placeholder(R.drawable.logoblack)
-            .into(myViewHolder.img1)
-
-
-        Picasso.get().load(ConstantValue.path + food.imgTwo)
-            .fit().centerInside().placeholder(R.drawable.logoblack)
-            .into(myViewHolder.img2)
+        val foodImageOne = storageRef.child("fooddi_photo/${food.imgOne}")
+        val foodImageTwo = storageRef.child("fooddi_photo/${food.imgTwo}")
+        myViewHolder.img1.loadIntoPicasso(foodImageOne.downloadUrl)
+        myViewHolder.img2.loadIntoPicasso(foodImageTwo.downloadUrl)
 
     }
 
@@ -73,5 +75,6 @@ class ItemAdapter(val context: Activity, val foodList: List<Food>, var lang: Str
         var img1: ImageView = itemView.findViewById(R.id.img1)
         var img2: ImageView = itemView.findViewById(R.id.img2)
     }
+
 
 }

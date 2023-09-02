@@ -21,19 +21,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 import com.pthw.food.FullScreenDialog
 import com.pthw.food.R
 import com.pthw.food.adapter.ItemAdapter
+import com.pthw.food.base.BaseActivity
+import com.pthw.food.databinding.ActivityMainBinding
 import com.pthw.food.model.Food
 import com.pthw.food.utils.ConstantValue
 import com.pthw.food.utils.PrefManager
 import com.pthw.food.utils.Rabbit
+import com.pthw.food.utils.inflater
 import com.pthw.food.viewmodel.FoodViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
+    override val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(inflater())
+    }
+
 
     private lateinit var itemAdapter: ItemAdapter
     private lateinit var foodViewModel: FoodViewModel
@@ -42,16 +47,17 @@ class MainActivity : AppCompatActivity() {
 
     //ads
     lateinit var mAdView: AdView
-//    lateinit var mInterstitial: InterstitialAd
+
+    //    lateinit var mInterstitial: InterstitialAd
     lateinit var adRequest: AdRequest
     lateinit var loading: ProgressDialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
         foodViewModel = ViewModelProvider(this).get(FoodViewModel::class.java)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         loading = ProgressDialog(this, R.style.customizedAlert)
 
         setupUI()
@@ -59,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupGoogleAd() {
-        MobileAds.initialize(this, getString(R.string.App_id)) //--load ads
+        MobileAds.initialize(this) {} //--load ads
         //--ad banner
         mAdView = findViewById(R.id.adView)
         adRequest = AdRequest.Builder().build()
@@ -78,39 +84,41 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupUI() {
-        recycler.setHasFixedSize(true)
+        binding.recycler.setHasFixedSize(true)
         var mLayoutManager: LayoutManager = LinearLayoutManager(this)
-        recycler.layoutManager = mLayoutManager
+        binding.recycler.layoutManager = mLayoutManager
 
         foodViewModel.getAllFood()
-        foodViewModel.allFood.observe(this, Observer { foods ->
-            itemAdapter = ItemAdapter(this@MainActivity, foods, ConstantValue.lang)
-            recycler!!.adapter = itemAdapter
+        foodViewModel.allFood.observe(this) { foods ->
+            itemAdapter = ItemAdapter(foods, ConstantValue.lang)
+            Log.i("Data", itemAdapter.foodList.joinToString())
+
+            binding.recycler.adapter = itemAdapter
             if (initialState) {
                 getArray(foods)
                 initialState = false
             }
-        })
+        }
 
 
         //--recycler start position
-        imgSearch.setOnClickListener {
-            recycler.smoothScrollToPosition(0)
-            motionlayout.transitionToStart()
+        binding.imgSearch.setOnClickListener {
+            binding.recycler.smoothScrollToPosition(0)
+            binding.motionlayout.transitionToStart()
         }
 
-        fullMenu.setOnClickListener {
+        binding.fullMenu.setOnClickListener {
             val dialog = FullScreenDialog()
             val ft = supportFragmentManager.beginTransaction()
             dialog.show(ft, FullScreenDialog.TAG)
         }
 
         //--search edit text
-        etSearch.addTextChangedListener(object : TextWatcher {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (etSearch.length() >= 2)
-                    imgDeleteSearch.visibility = View.VISIBLE
-                else imgDeleteSearch.visibility = View.INVISIBLE
+                if (binding.etSearch.length() >= 2)
+                    binding.imgDeleteSearch.visibility = View.VISIBLE
+                else binding.imgDeleteSearch.visibility = View.INVISIBLE
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -121,10 +129,10 @@ class MainActivity : AppCompatActivity() {
         })
 
         //--Set an item click listener for auto complete text view
-        etSearch.onItemClickListener =
+        binding.etSearch.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                etSearch.hideKeyboard()
+                binding.etSearch.hideKeyboard()
                 foodViewModel.getSearchFood(
                     if (ConstantValue.lang != "zawgyi") selectedItem else Rabbit.zg2uni(
                         selectedItem
@@ -134,8 +142,8 @@ class MainActivity : AppCompatActivity() {
 
 
         //--cross-image to delete search
-        imgDeleteSearch.setOnClickListener {
-            etSearch.setText("")
+        binding.imgDeleteSearch.setOnClickListener {
+            binding.etSearch.setText("")
             foodViewModel.getAllFood()
         }
 
@@ -162,6 +170,7 @@ class MainActivity : AppCompatActivity() {
                     k += 2
                 }
             }
+
             "zawgyi" -> {
                 for (i in food.indices) {
                     str[k] = Rabbit.uni2zg(food[i].oneMM)
@@ -169,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                     k += 2
                 }
             }
+
             else -> {
                 for (i in food.indices) {
                     str[k] = food[i].oneEN
@@ -179,13 +189,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         //set adapter for autocomplete textview
-        val adapter =
-            ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, str.distinct())
-        etSearch.setAdapter(adapter)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, str.distinct())
+        binding.etSearch.setAdapter(adapter)
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
         return true
@@ -195,7 +204,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         when (ConstantValue.lang) {
             "unicode" -> {
-                etSearch.setHint(R.string.search)
+                binding.etSearch.setHint(R.string.search)
                 menu.findItem(R.id.all).setTitle(R.string.all)
                 menu.findItem(R.id.food).setTitle(R.string.food)
                 menu.findItem(R.id.fruit).setTitle(R.string.fruit)
@@ -204,8 +213,9 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.snack).setTitle(R.string.snack)
                 loading.setMessage(getString(R.string.data))
             }
+
             "zawgyi" -> {
-                etSearch.setHint(R.string.searchZ)
+                binding.etSearch.setHint(R.string.searchZ)
                 menu.findItem(R.id.all).setTitle(R.string.allZ)
                 menu.findItem(R.id.food).setTitle(R.string.foodZ)
                 menu.findItem(R.id.fruit).setTitle(R.string.fruitZ)
@@ -214,8 +224,9 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.snack).setTitle(R.string.snackZ)
                 loading.setMessage(getString(R.string.dataZ))
             }
+
             else -> {
-                etSearch.setHint(R.string.searchE)
+                binding.etSearch.setHint(R.string.searchE)
                 menu.findItem(R.id.all).setTitle(R.string.allE)
                 menu.findItem(R.id.food).setTitle(R.string.foodE)
                 menu.findItem(R.id.fruit).setTitle(R.string.fruitE)
@@ -233,31 +244,36 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.all -> {
                 foodViewModel.getAllFood()
-                seasonal.setText(R.string.app_name)
+                binding.seasonal.setText(R.string.app_name)
             }
+
             R.id.food -> {
                 foodViewModel.getFoodByType("food")
-                seasonal.text = item.title
+                binding.seasonal.text = item.title
             }
+
             R.id.fruit -> {
                 foodViewModel.getFoodByType("fruit")
-                seasonal.text = item.title
+                binding.seasonal.text = item.title
             }
+
             R.id.vegetable -> {
                 foodViewModel.getFoodByType("vegetable")
-                seasonal.text = item.title
+                binding.seasonal.text = item.title
             }
+
             R.id.meat -> {
                 foodViewModel.getFoodByType("meat")
-                seasonal.text = item.title
+                binding.seasonal.text = item.title
             }
+
             R.id.snack -> {
                 foodViewModel.getFoodByType("snack")
-                seasonal.text = item.title
+                binding.seasonal.text = item.title
             }
         }
 
-        etSearch.hideKeyboard()
+        binding.etSearch.hideKeyboard()
         return super.onOptionsItemSelected(item)
     }
 }
