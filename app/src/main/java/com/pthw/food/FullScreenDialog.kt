@@ -9,9 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import com.pthw.food.activity.StartActivity
 import com.pthw.food.base.BaseDialogFragment
 import com.pthw.food.databinding.CustomDialogBinding
@@ -32,7 +29,6 @@ class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
     }
 
     var languageArr = emptyArray<String>()
-    lateinit var mAdView: AdView
     lateinit var prefManager: PrefManager
 
 
@@ -48,17 +44,15 @@ class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
         binding.toolbar.setNavigationOnClickListener { dismiss() }
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.colorPrimary))
 
-        prefManager = PrefManager(context!!)
+        prefManager = PrefManager(mContext)
 
         setLanguage(view, ConstantValue.lang)
 
         languageArr = when (ConstantValue.lang) {
-            "unicode" -> activity!!.resources.getStringArray(R.array.languageUni)
-            "zawgyi" -> activity!!.resources.getStringArray(R.array.languageZaw)
-            else -> activity!!.resources.getStringArray(R.array.languageEn)
+            "unicode" -> mContext.resources.getStringArray(R.array.languageUni)
+            "zawgyi" -> mContext.resources.getStringArray(R.array.languageZaw)
+            else -> mContext.resources.getStringArray(R.array.languageEn)
         }
-
-        setupGoogleAd(view)
 
 
         binding.txtChooseLanguage.setOnClickListener { showLangDialog() }
@@ -86,24 +80,16 @@ class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
     }
 
 
-    private fun setupGoogleAd(view: View) {
-        //--ad banner
-        mAdView = view.findViewById(R.id.adView)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
-    }
-
-
     private fun showLangDialog() {
         val checkItem = when (ConstantValue.lang) {
             "zawgyi" -> 2
             "unicode" -> 1
             else -> 0
         }
-        val builder = AlertDialog.Builder(context!!, R.style.customizedAlert)
+        val builder = AlertDialog.Builder(mContext, R.style.customizedAlert)
 
         builder.setSingleChoiceItems(
-            ArrayAdapter(context!!, R.layout.rtl_radio_item, languageArr), checkItem
+            ArrayAdapter(mContext, R.layout.rtl_radio_item, languageArr), checkItem
         ) { dialogInterface: DialogInterface, i: Int ->
             when (i) {
                 0 -> prefManager.setLanguage("english")
@@ -113,7 +99,7 @@ class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
 
             if (checkItem != i) {
                 dialogInterface.dismiss()
-                activity!!.finish()
+                mActivity.finish()
                 startActivity(Intent(activity, StartActivity::class.java))
             } else dialogInterface.dismiss()
         }

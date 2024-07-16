@@ -12,16 +12,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import com.pthw.food.FullScreenDialog
 import com.pthw.food.R
 import com.pthw.food.adapter.ItemAdapter
@@ -29,7 +22,6 @@ import com.pthw.food.base.BaseActivity
 import com.pthw.food.databinding.ActivityMainBinding
 import com.pthw.food.model.Food
 import com.pthw.food.utils.ConstantValue
-import com.pthw.food.utils.PrefManager
 import com.pthw.food.utils.Rabbit
 import com.pthw.food.utils.inflater
 import com.pthw.food.viewmodel.FoodViewModel
@@ -43,13 +35,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var itemAdapter: ItemAdapter
     private lateinit var foodViewModel: FoodViewModel
     var initialState = true
-
-
-    //ads
-    lateinit var mAdView: AdView
-
-    //    lateinit var mInterstitial: InterstitialAd
-    lateinit var adRequest: AdRequest
     lateinit var loading: ProgressDialog
 
 
@@ -58,28 +43,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         foodViewModel = ViewModelProvider(this).get(FoodViewModel::class.java)
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         loading = ProgressDialog(this, R.style.customizedAlert)
-
         setupUI()
-        setupGoogleAd()
-    }
-
-    private fun setupGoogleAd() {
-        MobileAds.initialize(this) {} //--load ads
-        //--ad banner
-        mAdView = findViewById(R.id.adView)
-        adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
-
-//        //--ad interstitial
-//        mInterstitial = InterstitialAd(this)
-//        mInterstitial.adUnitId = getString(R.string.FullAd_id)
-//        mInterstitial.loadAd(AdRequest.Builder().build())
-//        if (mInterstitial.isLoaded) {
-//            mInterstitial.show()
-//        } else {
-//            Log.d("TAG", "The interstitial wasn't loaded yet.")
-//        }
     }
 
 
@@ -189,7 +156,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
 
         //set adapter for autocomplete textview
-        val adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, str.distinct())
+        val adapter =
+            ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, str.distinct())
         binding.etSearch.setAdapter(adapter)
     }
 

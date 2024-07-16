@@ -10,11 +10,5 @@
             app:dragDirection="dragUp"
             app:onTouchUp="autoComplete"
             app:touchAnchorId="@+id/recycler" />
-
-        <!--<OnClick
-            app:clickAction="transitionToStart"
-            app:targetId="@+id/layout_search" />-->
     </Transition>
-
-
 </MotionScene>
