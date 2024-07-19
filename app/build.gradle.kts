@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -87,7 +88,11 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
+
+    implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-compiler:2.50")
 
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-analytics-ktx")
@@ -108,4 +113,5 @@ dependencies {
     implementation("androidx.compose.animation:animation:1.7.0-beta05")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.airbnb.android:lottie-compose:6.4.1")
+
 }

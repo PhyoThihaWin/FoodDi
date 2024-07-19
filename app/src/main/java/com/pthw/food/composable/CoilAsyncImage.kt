@@ -9,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
+import com.pthw.food.R
 
 /**
  * Created by P.T.H.W on 04/04/2024.
@@ -27,8 +29,8 @@ fun CoilAsyncImage(
             .fillMaxSize()
             .clip(shape),
         model = imageUrl,
-        placeholder = ColorPainter(Color.DarkGray),
-        error = ColorPainter(Color.DarkGray),
+        placeholder = painterResource(id = R.drawable.logoblack),
+        error = painterResource(id = R.drawable.logoblack),
         contentScale = contentScale,
         contentDescription = null,
     )

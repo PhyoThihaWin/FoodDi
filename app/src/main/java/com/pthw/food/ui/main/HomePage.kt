@@ -1,6 +1,7 @@
 package com.pthw.food.ui.main
 
 import android.content.res.Configuration
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -24,15 +25,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,6 +69,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -74,10 +79,13 @@ import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
 import com.pthw.food.composable.CustomTextField
 import com.pthw.food.composable.TitleTextView
+import com.pthw.food.data.model.Food
 import com.pthw.food.theme.Dimens
 import com.pthw.food.theme.FoodDiAppTheme
 import com.pthw.food.theme.LocalCustomColors
 import com.pthw.food.theme.Shapes
+import com.pthw.food.utils.ConstantValue
+import com.pthw.food.utils.getFirebaseImage
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -87,6 +95,22 @@ import timber.log.Timber
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
+    viewModel: HomePageViewModel = hiltViewModel()
+) {
+    HomePageContent(
+        uiState = UiState(
+            foods = viewModel.foods.value
+        )
+    )
+}
+
+private data class UiState(
+    val foods: List<Food> = emptyList()
+)
+
+@Composable
+private fun HomePageContent(
+    uiState: UiState,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
@@ -97,13 +121,89 @@ fun HomePage(
         targetValue = if (isScrolledOnTop) 0f else 1f,
         tween(500, easing = LinearOutSlowInEasing)
     )
-    HomePageContent(scrollState = scrollState, progress = progress) {
-        coroutineScope.launch {
-            scrollState.scrollToItem(0)
+
+    val configuration = LocalConfiguration.current
+    val openDialog = remember { mutableStateOf(false) }
+
+    MotionLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        start = startConstraintSet,
+        end = endConstraintSet,
+        progress = progress
+    ) {
+
+        Spacer(
+            modifier = Modifier
+                .layoutId("background")
+                .fillMaxWidth()
+                .fillMaxHeight(0.2f)
+                .background(color = colorResource(id = R.color.colorPrimary))
+        )
+
+        Icon(
+            modifier = Modifier.layoutId("setting"),
+            painter = painterResource(id = R.drawable.ic_more_menu),
+            tint = Color.White,
+            contentDescription = ""
+        )
+
+        Icon(
+            modifier = Modifier
+                .layoutId("filter")
+                .clickable {
+                    openDialog.value = true
+                },
+            painter = painterResource(id = R.drawable.ic_filter_list),
+            tint = Color.White,
+            contentDescription = ""
+        )
+
+        TitleTextView(
+            modifier = Modifier.layoutId("title"),
+            text = stringResource(id = R.string.app_name),
+            color = Color.White,
+            fontSize = Dimens.TEXT_HEADING_2
+        )
+
+
+        // item list
+        LazyColumn(
+            modifier = Modifier
+                .layoutId("list")
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = Dimens.MARGIN_LARGE,
+                bottom = (configuration.screenHeightDp / 4).dp
+            ),
+            state = scrollState,
+        ) {
+            items(uiState.foods) {
+                FoodListItemView(food = it)
+            }
         }
+
+
+        // searchBox
+        HomeSearchBarView(modifier = Modifier.layoutId("search")) {
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(0)
+            }
+        }
+
+        // filter dialog
+        if (openDialog.value) {
+            FilterDialog(
+                onDismissRequest = {
+                    openDialog.value = false
+                },
+                onItemSelected = { },
+            )
+        }
+
     }
 }
-
 
 private val startConstraintSet = ConstraintSet {
     val background = createRefFor("background")
@@ -182,148 +282,69 @@ private val endConstraintSet = ConstraintSet {
 }
 
 @Composable
-fun HomePageContent(
-    scrollState: LazyListState,
-    progress: Float,
-    iconClick: () -> Unit
-) {
+private fun FoodListItemView(food: Food) {
+    val foodImageOne = remember { mutableStateOf(Uri.EMPTY) }
+    val foodImageTwo = remember { mutableStateOf(Uri.EMPTY) }
+    food.getFirebaseImage { imageOne, imageTwo ->
+        foodImageOne.value = imageOne
+        foodImageTwo.value = imageTwo
+    }
 
-    val configuration = LocalConfiguration.current
-    val openDialog = remember { mutableStateOf(false) }
-
-    MotionLayout(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        start = startConstraintSet,
-        end = endConstraintSet,
-        progress = progress
+    Card(
+        modifier = Modifier.padding(
+            start = Dimens.MARGIN_20, end = Dimens.MARGIN_20,
+            bottom = Dimens.MARGIN_MEDIUM_2
+        ),
+        shape = Shapes.medium,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = Dimens.MARGIN_SMALL
+        )
     ) {
-
-        Spacer(
+        Row(
             modifier = Modifier
-                .layoutId("background")
                 .fillMaxWidth()
-                .fillMaxHeight(0.2f)
-                .background(color = colorResource(id = R.color.colorPrimary))
-        )
-
-        Icon(
-            modifier = Modifier.layoutId("setting"),
-            painter = painterResource(id = R.drawable.ic_more_menu),
-            tint = Color.White,
-            contentDescription = ""
-        )
-
-        Icon(
-            modifier = Modifier
-                .layoutId("filter")
-                .clickable {
-                    openDialog.value = true
-                },
-            painter = painterResource(id = R.drawable.ic_filter_list),
-            tint = Color.White,
-            contentDescription = ""
-        )
-
-        TitleTextView(
-            modifier = Modifier.layoutId("title"),
-            text = stringResource(id = R.string.app_name),
-            color = Color.White,
-            fontSize = Dimens.TEXT_HEADING_2
-        )
-
-
-        // test list
-        LazyColumn(
-            modifier = Modifier
-                .layoutId("list")
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = Dimens.MARGIN_LARGE,
-                bottom = (configuration.screenHeightDp / 4).dp
-            ),
-            state = scrollState,
+                .padding(Dimens.MARGIN_LARGE),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            item {
-                Column {
-                    repeat((1..10).count()) {
-                        Card(
-                            modifier = Modifier.padding(
-                                start = Dimens.MARGIN_20, end = Dimens.MARGIN_20,
-                                bottom = Dimens.MARGIN_MEDIUM_2
-                            ),
-                            shape = Shapes.medium,
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = Dimens.MARGIN_SMALL
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(Dimens.MARGIN_LARGE),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    CoilAsyncImage(
-                                        imageUrl = R.drawable.logoblack,
-                                        modifier = Modifier
-                                            .size(Dimens.IMAGE_CARD_SIZE)
-                                            .clip(Shapes.medium),
-                                        contentScale = ContentScale.Fit
-                                    )
-                                    Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
-                                    Text(text = "Honey", fontSize = Dimens.TEXT_REGULAR)
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Spacer(modifier = Modifier.height(Dimens.MARGIN_SMALL))
-                                    Text(text = "Vs", fontSize = Dimens.TEXT_XLARGE)
-                                    Spacer(modifier = Modifier.height(Dimens.MARGIN_10))
-                                    TitleTextView(
-                                        text = "Honey",
-                                        color = colorResource(id = R.color.colorPrimary),
-                                        fontSize = Dimens.TEXT_REGULAR_2
-                                    )
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    CoilAsyncImage(
-                                        imageUrl = R.drawable.logoblack,
-                                        modifier = Modifier
-                                            .size(Dimens.IMAGE_CARD_SIZE)
-                                            .clip(Shapes.medium),
-                                        contentScale = ContentScale.Fit
-                                    )
-                                    Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
-                                    Text(text = "Honey", fontSize = Dimens.TEXT_REGULAR)
-                                }
-                            }
-                        }
-                    }
-                }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CoilAsyncImage(
+                    imageUrl = foodImageOne.value,
+                    modifier = Modifier
+                        .size(Dimens.IMAGE_CARD_SIZE)
+                        .clip(Shapes.medium),
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
+                Text(text = food.oneEN, fontSize = Dimens.TEXT_REGULAR)
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(Dimens.MARGIN_SMALL))
+                Text(text = "Vs", fontSize = Dimens.TEXT_XLARGE)
+                Spacer(modifier = Modifier.height(Dimens.MARGIN_10))
+                TitleTextView(
+                    text = food.dieEN,
+                    color = colorResource(id = R.color.colorPrimary),
+                    fontSize = Dimens.TEXT_REGULAR_2
+                )
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CoilAsyncImage(
+                    imageUrl = foodImageTwo.value,
+                    modifier = Modifier
+                        .size(Dimens.IMAGE_CARD_SIZE)
+                        .clip(Shapes.medium),
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
+                Text(text = food.twoEN, fontSize = Dimens.TEXT_REGULAR)
             }
         }
-
-
-        // searchBox
-        HomeSearchBarView(modifier = Modifier.layoutId("search"), iconClick)
-
-        // filter dialog
-        if (openDialog.value) {
-            FilterDialog(
-                onDismissRequest = {
-                    openDialog.value = false
-                },
-                onConfirmation = { },
-                imageDescription = ""
-            )
-        }
-
     }
 }
 
@@ -365,14 +386,11 @@ private fun HomeSearchBarView(
 }
 
 @Composable
-fun FilterDialog(
+private fun FilterDialog(
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    imageDescription: String,
+    onItemSelected: (index: Int) -> Unit,
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.filter_loading))
         val progress by animateLottieCompositionAsState(
             composition = composition,
@@ -394,36 +412,43 @@ fun FilterDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 LottieAnimation(
-                    modifier = Modifier.height(200.dp),
+                    modifier = Modifier.height(150.dp),
                     composition = composition,
                     progress = { progress },
                 )
-                Text(
-                    text = "This is a dialog with buttons and an image.",
-                    modifier = Modifier.padding(16.dp),
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    TextButton(
-                        onClick = { onDismissRequest() },
-                        modifier = Modifier.padding(8.dp),
+
+                ConstantValue.filterList.forEachIndexed { index, item ->
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            .clickable {
+                                onItemSelected(index)
+                            }
                     ) {
-                        Text("Dismiss")
-                    }
-                    TextButton(
-                        onClick = { onConfirmation() },
-                        modifier = Modifier.padding(8.dp),
-                    ) {
-                        Text("Confirm")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = ""
+                            )
+                            Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM))
+                            Text(
+                                text = stringResource(id = item.title),
+                                modifier = Modifier.padding(16.dp),
+                            )
+                        }
+                        if (index != 5) HorizontalDivider()
                     }
                 }
+
             }
         }
     }
 }
+
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
@@ -431,9 +456,17 @@ private fun HomePagePreview() {
     FoodDiAppTheme {
         Surface {
             HomePageContent(
-                scrollState = rememberLazyListState(),
-                progress = 0f,
-                iconClick = {}
+                uiState = UiState(
+                    listOf(
+                        Food.fake(),
+                        Food.fake(),
+                        Food.fake(),
+                        Food.fake(),
+                        Food.fake(),
+                        Food.fake(),
+                        Food.fake(),
+                    )
+                )
             )
         }
     }
@@ -446,8 +479,7 @@ private fun FilterDialogPreview() {
         Surface {
             FilterDialog(
                 onDismissRequest = { /*TODO*/ },
-                onConfirmation = { /*TODO*/ },
-                imageDescription = "null"
+                onItemSelected = { /*TODO*/ },
             )
         }
     }

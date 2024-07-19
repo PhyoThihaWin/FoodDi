@@ -1,11 +1,14 @@
 package com.pthw.food
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 18/07/2024.
  */
+
+@HiltAndroidApp
 class FoodDiApp : Application() {
     override fun onCreate() {
         super.onCreate()

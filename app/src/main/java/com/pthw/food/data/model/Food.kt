@@ -35,4 +35,19 @@ data class Food(
 
     @ColumnInfo(name = "imgTwo")
     val imgTwo: String
-)
+) {
+    companion object {
+        fun fake() = Food(
+            id = 1,
+            oneMM = "",
+            twoMM = "",
+            dieMM = "",
+            oneEN = "Apple",
+            twoEN = "Orange",
+            dieEN = "Dead",
+            type = "",
+            imgOne = "",
+            imgTwo = ""
+        )
+    }
+}

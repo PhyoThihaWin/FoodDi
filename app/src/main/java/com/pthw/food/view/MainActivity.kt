@@ -12,7 +12,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.pthw.food.R
@@ -28,9 +30,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         ActivityMainBinding.inflate(inflater())
     }
 
-
     private lateinit var itemAdapter: ItemAdapter
-    private lateinit var foodViewModel: FoodViewModel
+    private val foodViewModel by viewModels<FoodViewModel>()
     var initialState = true
     lateinit var loading: ProgressDialog
 
@@ -38,7 +39,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        foodViewModel = ViewModelProvider(this).get(FoodViewModel::class.java)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
@@ -53,6 +53,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.recycler.layoutManager = mLayoutManager
 
         foodViewModel.getAllFood()
+
         foodViewModel.allFood.observe(this) { foods ->
             itemAdapter = ItemAdapter(foods, ConstantValue.lang)
             Log.i("Data", itemAdapter.foodList.joinToString())
