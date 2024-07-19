@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -35,11 +36,13 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,10 +60,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
 import com.pthw.food.composable.CustomTextField
@@ -180,6 +189,7 @@ fun HomePageContent(
 ) {
 
     val configuration = LocalConfiguration.current
+    val openDialog = remember { mutableStateOf(false) }
 
     MotionLayout(
         modifier = Modifier
@@ -206,7 +216,11 @@ fun HomePageContent(
         )
 
         Icon(
-            modifier = Modifier.layoutId("filter"),
+            modifier = Modifier
+                .layoutId("filter")
+                .clickable {
+                    openDialog.value = true
+                },
             painter = painterResource(id = R.drawable.ic_filter_list),
             tint = Color.White,
             contentDescription = ""
@@ -284,7 +298,6 @@ fun HomePageContent(
                                             .size(Dimens.IMAGE_CARD_SIZE)
                                             .clip(Shapes.medium),
                                         contentScale = ContentScale.Fit
-
                                     )
                                     Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
                                     Text(text = "Honey", fontSize = Dimens.TEXT_REGULAR)
@@ -299,6 +312,17 @@ fun HomePageContent(
 
         // searchBox
         HomeSearchBarView(modifier = Modifier.layoutId("search"), iconClick)
+
+        // filter dialog
+        if (openDialog.value) {
+            FilterDialog(
+                onDismissRequest = {
+                    openDialog.value = false
+                },
+                onConfirmation = { },
+                imageDescription = ""
+            )
+        }
 
     }
 }
@@ -340,6 +364,67 @@ private fun HomeSearchBarView(
     }
 }
 
+@Composable
+fun FilterDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    imageDescription: String,
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        // Draw a rectangle shape with rounded corners inside the dialog
+
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.filter_loading))
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            restartOnPlay = true,
+            iterations = LottieConstants.IterateForever,
+        )
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = Shapes.medium,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                LottieAnimation(
+                    modifier = Modifier.height(200.dp),
+                    composition = composition,
+                    progress = { progress },
+                )
+                Text(
+                    text = "This is a dialog with buttons and an image.",
+                    modifier = Modifier.padding(16.dp),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { onDismissRequest() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Confirm")
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun HomePagePreview() {
@@ -349,6 +434,20 @@ private fun HomePagePreview() {
                 scrollState = rememberLazyListState(),
                 progress = 0f,
                 iconClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun FilterDialogPreview() {
+    FoodDiAppTheme {
+        Surface {
+            FilterDialog(
+                onDismissRequest = { /*TODO*/ },
+                onConfirmation = { /*TODO*/ },
+                imageDescription = "null"
             )
         }
     }
