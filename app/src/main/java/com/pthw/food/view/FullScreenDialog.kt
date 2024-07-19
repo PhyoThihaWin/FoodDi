@@ -1,4 +1,4 @@
-package com.pthw.food
+package com.pthw.food.view
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
-import com.pthw.food.activity.StartActivity
+import com.pthw.food.R
 import com.pthw.food.base.BaseDialogFragment
 import com.pthw.food.databinding.CustomDialogBinding
 import com.pthw.food.databinding.FullScreenDialogBinding

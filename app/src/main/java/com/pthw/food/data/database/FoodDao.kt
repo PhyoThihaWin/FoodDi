@@ -1,8 +1,8 @@
-package com.pthw.food.database
+package com.pthw.food.data.database
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.pthw.food.model.Food
+import com.pthw.food.data.model.Food
 
 
 @Dao

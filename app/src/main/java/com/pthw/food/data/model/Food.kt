@@ -1,4 +1,4 @@
-package com.pthw.food.model
+package com.pthw.food.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

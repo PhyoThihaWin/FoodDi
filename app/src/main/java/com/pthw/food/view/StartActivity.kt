@@ -1,4 +1,4 @@
-package com.pthw.food.activity
+package com.pthw.food.view
 
 import android.content.Intent
 import android.os.Bundle

@@ -1,10 +1,10 @@
-package com.pthw.food.database
+package com.pthw.food.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.pthw.food.model.Food
+import com.pthw.food.data.model.Food
 
 @Database(entities = [Food::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">FoodDi</string>
     <string name="eat">Food that should not eat together</string>
     <string name="see">အမှန်မြင်ရသည်</string>
     <string name="search">အစားအစာရှာရန်</string>

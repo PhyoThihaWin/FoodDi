@@ -1,0 +1,57 @@
+{
+  ConstraintSets: {
+    start: {
+      background: {
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+      },
+      setting: {
+        start: ['parent', 'start', 16],
+        top: ['parent', 'top', 16],
+      },
+      title: {
+        top: ['background', 'top', 0],
+        bottom: ['background', 'bottom', 0],
+        start: ['background', 'start', 0],
+        end: ['background', 'end', 0],
+      },
+      search: {
+        start: ['parent', 'start', 0],
+        end: ['parent', 'end', 20],
+        top: ['background', 'bottom', 0],
+        bottom: ['background', 'bottom', 0],
+      },
+      list: {
+        top: ['search', 'bottom', 0],
+        bottom: ['parent', 'bottom', 0],
+      }
+    },
+    end: {
+      background: {
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        bottom: ['parent', 'top'],
+      },
+      setting: {
+        end: ['parent', 'start', 0],
+        top: ['parent', 'top', 16],
+      },
+      title: {
+        bottom: ['parent', 'top', 0],
+        start: ['background', 'start', 0],
+        end: ['background', 'end', 0],
+      },
+      search: {
+        start: ['parent', 'start', 0],
+        end: ['parent', 'end', 20],
+        top: ['background', 'bottom', 0],
+        bottom: ['background', 'bottom', 0],
+      },
+      list: {
+        top: ['search', 'bottom', 0],
+        bottom: ['parent', 'bottom', 0],
+      }
+    }
+  }
+}

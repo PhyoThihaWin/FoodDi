@@ -1,4 +1,4 @@
-package com.pthw.food.activity
+package com.pthw.food.view
 
 import android.app.ProgressDialog
 import android.content.Context
@@ -15,16 +15,13 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.pthw.food.FullScreenDialog
 import com.pthw.food.R
-import com.pthw.food.adapter.ItemAdapter
 import com.pthw.food.base.BaseActivity
 import com.pthw.food.databinding.ActivityMainBinding
-import com.pthw.food.model.Food
+import com.pthw.food.data.model.Food
 import com.pthw.food.utils.ConstantValue
 import com.pthw.food.utils.Rabbit
 import com.pthw.food.utils.inflater
-import com.pthw.food.viewmodel.FoodViewModel
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val binding: ActivityMainBinding by lazy {

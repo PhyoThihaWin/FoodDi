@@ -1,14 +1,13 @@
-package com.pthw.food.viewmodel
+package com.pthw.food.view
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.pthw.food.database.AppDatabase
-import com.pthw.food.model.Food
-import com.pthw.food.repository.FoodRepository
+import com.pthw.food.data.database.AppDatabase
+import com.pthw.food.data.model.Food
+import com.pthw.food.data.repository.FoodRepository
 import kotlinx.coroutines.launch
 
 class FoodViewModel(application: Application) : AndroidViewModel(application) {

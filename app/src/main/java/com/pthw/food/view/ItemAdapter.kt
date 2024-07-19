@@ -1,4 +1,4 @@
-package com.pthw.food.adapter
+package com.pthw.food.view
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.pthw.food.R
-import com.pthw.food.model.Food
+import com.pthw.food.data.model.Food
 import com.pthw.food.utils.Rabbit
 import com.pthw.food.utils.loadIntoPicasso
 
