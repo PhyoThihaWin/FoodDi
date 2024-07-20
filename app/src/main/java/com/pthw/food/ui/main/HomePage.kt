@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
@@ -59,6 +60,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,10 +77,12 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.firebase.FirebaseApp
 import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
 import com.pthw.food.composable.CustomTextField
 import com.pthw.food.composable.TitleTextView
+import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
 import com.pthw.food.theme.Dimens
 import com.pthw.food.theme.FoodDiAppTheme
@@ -94,23 +98,45 @@ import timber.log.Timber
  */
 @Composable
 fun HomePage(
-    modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = hiltViewModel()
 ) {
     HomePageContent(
         uiState = UiState(
+            pageTitle = viewModel.pageTitle.value,
             foods = viewModel.foods.value
-        )
+        ),
+        onAction = {
+            when (it) {
+                is UiEvent.SearchFoods -> {
+                    viewModel.getSearchFoods(it.search)
+                }
+
+                is UiEvent.FilterFoods -> {
+                    if (it.filterType.type == null) {
+                        viewModel.getAllFood()
+                    } else {
+                        viewModel.getFoodsByType(it.filterType)
+                    }
+                }
+            }
+        }
     )
 }
 
 private data class UiState(
+    val pageTitle: Int = R.string.app_name,
     val foods: List<Food> = emptyList()
 )
+
+private sealed class UiEvent {
+    class SearchFoods(val search: String) : UiEvent()
+    class FilterFoods(val filterType: FilterType) : UiEvent()
+}
 
 @Composable
 private fun HomePageContent(
     uiState: UiState,
+    onAction: (UiEvent) -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
@@ -119,7 +145,7 @@ private fun HomePageContent(
     }
     val progress by animateFloatAsState(
         targetValue = if (isScrolledOnTop) 0f else 1f,
-        tween(500, easing = LinearOutSlowInEasing)
+        tween(500, easing = LinearOutSlowInEasing), label = ""
     )
 
     val configuration = LocalConfiguration.current
@@ -143,7 +169,13 @@ private fun HomePageContent(
         )
 
         Icon(
-            modifier = Modifier.layoutId("setting"),
+            modifier = Modifier
+                .layoutId("setting")
+                .clip(CircleShape)
+                .clickable {
+                    openDialog.value = true
+                }
+                .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_more_menu),
             tint = Color.White,
             contentDescription = ""
@@ -152,9 +184,11 @@ private fun HomePageContent(
         Icon(
             modifier = Modifier
                 .layoutId("filter")
+                .clip(CircleShape)
                 .clickable {
                     openDialog.value = true
-                },
+                }
+                .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_filter_list),
             tint = Color.White,
             contentDescription = ""
@@ -162,7 +196,7 @@ private fun HomePageContent(
 
         TitleTextView(
             modifier = Modifier.layoutId("title"),
-            text = stringResource(id = R.string.app_name),
+            text = stringResource(id = uiState.pageTitle),
             color = Color.White,
             fontSize = Dimens.TEXT_HEADING_2
         )
@@ -186,11 +220,17 @@ private fun HomePageContent(
 
 
         // searchBox
-        HomeSearchBarView(modifier = Modifier.layoutId("search")) {
-            coroutineScope.launch {
-                scrollState.animateScrollToItem(0)
+        HomeSearchBarView(
+            modifier = Modifier.layoutId("search"),
+            iconClick = {
+                coroutineScope.launch {
+                    scrollState.animateScrollToItem(0)
+                }
+            },
+            onValueChange = {
+                onAction(UiEvent.SearchFoods(it))
             }
-        }
+        )
 
         // filter dialog
         if (openDialog.value) {
@@ -198,7 +238,10 @@ private fun HomePageContent(
                 onDismissRequest = {
                     openDialog.value = false
                 },
-                onItemSelected = { },
+                onItemSelected = {
+                    openDialog.value = false
+                    onAction(UiEvent.FilterFoods(it))
+                },
             )
         }
 
@@ -215,12 +258,12 @@ private val startConstraintSet = ConstraintSet {
     val setting = createRefFor("setting")
     constrain(setting) {
         top.linkTo(parent.top, Dimens.MARGIN_MEDIUM_2)
-        start.linkTo(parent.start, Dimens.MARGIN_20)
+        start.linkTo(parent.start, Dimens.MARGIN_10)
     }
     val filter = createRefFor("filter")
     constrain(filter) {
         top.linkTo(parent.top, Dimens.MARGIN_MEDIUM_2)
-        end.linkTo(parent.end, Dimens.MARGIN_20)
+        end.linkTo(parent.end, Dimens.MARGIN_10)
     }
     val title = createRefFor("title")
     constrain(title) {
@@ -285,9 +328,13 @@ private val endConstraintSet = ConstraintSet {
 private fun FoodListItemView(food: Food) {
     val foodImageOne = remember { mutableStateOf(Uri.EMPTY) }
     val foodImageTwo = remember { mutableStateOf(Uri.EMPTY) }
-    food.getFirebaseImage { imageOne, imageTwo ->
-        foodImageOne.value = imageOne
-        foodImageTwo.value = imageTwo
+
+    val isPreview = LocalInspectionMode.current
+    if (!isPreview) {
+        food.getFirebaseImage { imageOne, imageTwo ->
+            foodImageOne.value = imageOne
+            foodImageTwo.value = imageTwo
+        }
     }
 
     Card(
@@ -351,7 +398,8 @@ private fun FoodListItemView(food: Food) {
 @Composable
 private fun HomeSearchBarView(
     modifier: Modifier,
-    iconClick: () -> Unit
+    iconClick: () -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -380,7 +428,9 @@ private fun HomeSearchBarView(
                     .fillMaxWidth()
                     .padding(start = Dimens.MARGIN_MEDIUM),
                 placeholderText = "Search"
-            )
+            ) {
+                onValueChange(it)
+            }
         }
     }
 }
@@ -388,7 +438,7 @@ private fun HomeSearchBarView(
 @Composable
 private fun FilterDialog(
     onDismissRequest: () -> Unit,
-    onItemSelected: (index: Int) -> Unit,
+    onItemSelected: (FilterType) -> Unit,
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.filter_loading))
@@ -420,10 +470,10 @@ private fun FilterDialog(
                 ConstantValue.filterList.forEachIndexed { index, item ->
                     Column(
                         modifier = Modifier
-                            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                             .clickable {
-                                onItemSelected(index)
+                                onItemSelected(item)
                             }
+                            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -434,13 +484,17 @@ private fun FilterDialog(
                                 painter = painterResource(id = item.icon),
                                 contentDescription = ""
                             )
-                            Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM))
+                            Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
                             Text(
                                 text = stringResource(id = item.title),
                                 modifier = Modifier.padding(16.dp),
                             )
                         }
-                        if (index != 5) HorizontalDivider()
+                        if (index == 5) {
+                            Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM))
+                        } else {
+                            HorizontalDivider()
+                        }
                     }
                 }
 
@@ -457,7 +511,7 @@ private fun HomePagePreview() {
         Surface {
             HomePageContent(
                 uiState = UiState(
-                    listOf(
+                    foods = listOf(
                         Food.fake(),
                         Food.fake(),
                         Food.fake(),

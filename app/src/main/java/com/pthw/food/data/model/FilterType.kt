@@ -9,4 +9,5 @@ import androidx.annotation.StringRes
 data class FilterType(
     @DrawableRes val icon: Int,
     @StringRes val title: Int,
+    val type: String?
 )

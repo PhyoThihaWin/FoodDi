@@ -67,6 +67,10 @@ android {
         }
     }
 
+    composeCompiler {
+        enableStrongSkippingMode = true
+    }
+
 }
 
 dependencies {
@@ -113,5 +117,4 @@ dependencies {
     implementation("androidx.compose.animation:animation:1.7.0-beta05")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.airbnb.android:lottie-compose:6.4.1")
-
 }

@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.pthw.food.theme.Dimens
 import com.pthw.food.theme.FoodDiAppTheme
+import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 19/04/2024.
@@ -37,18 +39,21 @@ fun CustomTextField(
     trailingIcon: (@Composable () -> Unit)? = null,
     placeholderText: String = "Placeholder",
     fontSize: TextUnit = Dimens.TEXT_REGULAR,
-    backgroundColor: Color = Color.Transparent
+    backgroundColor: Color = Color.Transparent,
+    onValueChange: (String) -> Unit = {}
 ) {
     var text by rememberSaveable { mutableStateOf("") }
-    BasicTextField(modifier = modifier
-        .background(
-            backgroundColor,
-            MaterialTheme.shapes.small,
-        )
-        .fillMaxWidth(),
+    BasicTextField(
+        modifier = modifier
+            .background(
+                backgroundColor,
+                MaterialTheme.shapes.small,
+            )
+            .fillMaxWidth(),
         value = text,
         onValueChange = {
             text = it
+            onValueChange(it)
         },
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
