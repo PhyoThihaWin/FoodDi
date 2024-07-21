@@ -194,12 +194,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
             else -> {
                 binding.etSearch.setHint(R.string.searchE)
-                menu.findItem(R.id.all).setTitle(R.string.allE)
-                menu.findItem(R.id.food).setTitle(R.string.foodE)
-                menu.findItem(R.id.fruit).setTitle(R.string.fruitE)
-                menu.findItem(R.id.vegetable).setTitle(R.string.vegetableE)
-                menu.findItem(R.id.meat).setTitle(R.string.meatE)
-                menu.findItem(R.id.snack).setTitle(R.string.snackE)
+                menu.findItem(R.id.all).setTitle(R.string.all)
+                menu.findItem(R.id.food).setTitle(R.string.food)
+                menu.findItem(R.id.fruit).setTitle(R.string.fruit)
+                menu.findItem(R.id.vegetable).setTitle(R.string.vegetable)
+                menu.findItem(R.id.meat).setTitle(R.string.meat)
+                menu.findItem(R.id.snack).setTitle(R.string.snack)
                 loading.setMessage(getString(R.string.dataE))
             }
         }

@@ -124,10 +124,10 @@ class FullScreenDialog : BaseDialogFragment<FullScreenDialogBinding>() {
             }
 
             else -> {
-                binding.toolbar.setTitle(R.string.settingE)
-                binding.txtChooseLanguage.setText(R.string.chooseLanguageE)
-                binding.txtAboutApp.setText(R.string.aboutAppE)
-                binding.txtMoreApp.setText(R.string.moreAppE)
+                binding.toolbar.setTitle(R.string.setting)
+                binding.txtChooseLanguage.setText(R.string.chooseLanguage)
+                binding.txtAboutApp.setText(R.string.aboutApp)
+                binding.txtMoreApp.setText(R.string.moreApp)
             }
         }
     }

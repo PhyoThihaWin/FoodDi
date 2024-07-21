@@ -42,12 +42,16 @@ data class Food(
             oneMM = "",
             twoMM = "",
             dieMM = "",
-            oneEN = "Apple",
+            oneEN = "Apple Sword Bean",
             twoEN = "Orange",
-            dieEN = "Dead",
+            dieEN = "Chest congestion| Dead",
             type = "",
             imgOne = "",
             imgTwo = ""
         )
     }
+
+    fun getFoodOne(localeCode: String) = if (localeCode == Localization.ENGLISH) oneEN else oneMM
+    fun getFoodTwo(localeCode: String) = if (localeCode == Localization.ENGLISH) twoEN else twoMM
+    fun getFoodDie(localeCode: String) = if (localeCode == Localization.ENGLISH) dieEN else dieMM
 }

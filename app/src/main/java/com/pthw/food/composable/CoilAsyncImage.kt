@@ -9,8 +9,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
+import coil.imageLoader
+import coil.util.DebugLogger
 import com.pthw.food.R
 
 /**
@@ -24,6 +27,10 @@ fun CoilAsyncImage(
     contentScale: ContentScale = ContentScale.Crop,
     shape: Shape = RoundedCornerShape(0)
 ) {
+    val imageLoader = LocalContext.current.imageLoader.newBuilder()
+        .logger(DebugLogger())
+        .build()
+
     AsyncImage(
         modifier = modifier
             .fillMaxSize()
@@ -33,5 +40,6 @@ fun CoilAsyncImage(
         error = painterResource(id = R.drawable.logoblack),
         contentScale = contentScale,
         contentDescription = null,
+        imageLoader = imageLoader
     )
 }

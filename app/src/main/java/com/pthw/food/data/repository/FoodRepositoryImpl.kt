@@ -1,7 +1,8 @@
 package com.pthw.food.data.repository
 
 import com.pthw.food.data.database.AppDatabase
-import com.pthw.food.data.database.FoodDao
+import com.pthw.food.utils.ConstantValue
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -10,7 +11,28 @@ import javax.inject.Inject
 class FoodRepositoryImpl @Inject constructor(
     private val database: AppDatabase
 ) : FoodRepository {
-    override suspend fun getAllFood() = database.foodDao().getAllFood()
-    override suspend fun getSearchFood(word: String) = database.foodDao().getSearchFood(word)
-    override suspend fun getFoodByType(type: String) = database.foodDao().getFoodByType(type)
+    override suspend fun getAllFood() = database.foodDao().getAllFood().map {
+        it.copy(
+            imgOne = it.imgOne.firebaseImage(),
+            imgTwo = it.imgTwo.firebaseImage()
+        )
+    }
+
+    override suspend fun getSearchFood(word: String) = database.foodDao().getSearchFood(word).map {
+        it.copy(
+            imgOne = it.imgOne.firebaseImage(),
+            imgTwo = it.imgTwo.firebaseImage()
+        )
+    }
+
+    override suspend fun getFoodByType(type: String) = database.foodDao().getFoodByType(type).map {
+        it.copy(
+            imgOne = it.imgOne.firebaseImage(),
+            imgTwo = it.imgTwo.firebaseImage()
+        )
+    }
+
+    private fun String.firebaseImage(): String {
+        return String.format(Locale.ENGLISH, ConstantValue.IMAGE_PATH, "fooddi_photo%2F$this")
+    }
 }
