@@ -9,7 +9,7 @@ import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
 import com.pthw.food.data.model.Localization
 import com.pthw.food.data.repository.FoodRepository
-import com.pthw.food.data.repository.LanguageRepository
+import com.pthw.food.data.repository.CacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
     private val repository: FoodRepository,
-    private val languageRepository: LanguageRepository
+    private val cacheRepository: CacheRepository
 ) : ViewModel() {
 
     var pageTitle = mutableIntStateOf(R.string.app_name)
@@ -60,14 +60,14 @@ class HomePageViewModel @Inject constructor(
 
     fun updateLanguageCache(localeCode: String) {
         viewModelScope.launch {
-            languageRepository.putLanguage(localeCode)
+            cacheRepository.putLanguage(localeCode)
             getLanguageCache()
         }
     }
 
     private fun getLanguageCache() {
         viewModelScope.launch {
-            currentLanguage.value = languageRepository.getLanguage()
+            currentLanguage.value = cacheRepository.getLanguage()
         }
     }
 

@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pthw.food.theme.FoodDiAppTheme
 import com.pthw.food.ui.main.HomePage
+import com.pthw.food.utils.ConstantValue
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -18,10 +20,20 @@ class MainActivity : ComponentActivity() {
         installSplashScreen().setKeepOnScreenCondition {
             viewModel.isSplashShow.value
         }
+
         super.onCreate(savedInstanceState)
+
         setContent {
-            FoodDiAppTheme {
-                HomePage()
+            FoodDiAppTheme(
+                darkTheme = when (viewModel.appThemeMode.value) {
+                    ConstantValue.LIGHT_MODE -> false
+                    ConstantValue.DARK_MODE -> true
+                    else -> isSystemInDarkTheme()
+                },
+            ) {
+                HomePage(darkTheme = it) {
+                    viewModel.updateCachedThemeMode(it)
+                }
             }
         }
     }

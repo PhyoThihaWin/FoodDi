@@ -9,15 +9,13 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.pthw.food.utils.ConstantValue
+import timber.log.Timber
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -87,9 +85,8 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun FoodDiAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    androidTheme: Boolean = false,
     dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable (darkTheme: Boolean) -> Unit
 ) {
 
     // default colorScheme
@@ -103,10 +100,6 @@ fun FoodDiAppTheme(
         else -> LightColorScheme
     }
 
-    // custom colorScheme
-    val customColorsPalette =
-        if (darkTheme) OnDarkCustomColorsPalette else OnLightCustomColorsPalette
-
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -119,18 +112,14 @@ fun FoodDiAppTheme(
         }
     }
 
-    CompositionLocalProvider(
-        LocalCustomColors provides customColorsPalette,
-        LocalNavController provides rememberNavController()
-    ) {
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
-        )
-    }
-
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        shapes = Shapes,
+        content = {
+            content(darkTheme)
+        }
+    )
 }
 
-val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController found!") }
+

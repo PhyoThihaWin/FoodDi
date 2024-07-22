@@ -2,8 +2,8 @@ package com.pthw.food.di
 
 import com.pthw.food.data.repository.FoodRepository
 import com.pthw.food.data.repository.FoodRepositoryImpl
-import com.pthw.food.data.repository.LanguageRepository
-import com.pthw.food.data.repository.LanguageRepositoryImpl
+import com.pthw.food.data.repository.CacheRepository
+import com.pthw.food.data.repository.CacheRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,5 +20,5 @@ abstract class RepositoryModule {
     abstract fun bindFoodRepository(repositoryImpl: FoodRepositoryImpl): FoodRepository
 
     @Binds
-    abstract fun bindLanguageRepository(repositoryImpl: LanguageRepositoryImpl): LanguageRepository
+    abstract fun bindLanguageRepository(repositoryImpl: CacheRepositoryImpl): CacheRepository
 }
