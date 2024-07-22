@@ -44,7 +44,7 @@ data class Food(
             dieMM = "",
             oneEN = "Apple Sword Bean",
             twoEN = "Orange",
-            dieEN = "Chest congestion| Dead",
+            dieEN = "Chest congestion| Death",
             type = "",
             imgOne = "",
             imgTwo = ""

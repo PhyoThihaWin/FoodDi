@@ -38,6 +38,7 @@ android {
         create("dev") {
             dimension = "version"
             versionNameSuffix = "-dev"
+            applicationIdSuffix = ".dev"
             resValue("string", "app_name", "Dev|FoodDi")
         }
         create("prod") {
@@ -93,6 +94,7 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.google.dagger:hilt-android:2.50")
