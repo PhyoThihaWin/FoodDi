@@ -1,6 +1,8 @@
 package com.pthw.food.ui.main
 
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -97,7 +101,6 @@ fun HomePage(
     viewModel: HomePageViewModel = hiltViewModel()
 ) {
     Timber.i("Reached: HomePage")
-
     HomePageContent(
         uiState = UiState(
             themeCode = viewModel.appThemeMode.value,
@@ -161,16 +164,19 @@ private fun HomePageContent(
         tween(500, easing = LinearOutSlowInEasing), label = ""
     )
 
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val configuration = LocalConfiguration.current
     var showFilterDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showAboutAppDialog by remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
 
-    // set locale
+    // Set locale
     LocalizationUpdater(uiState.localeCode)
 
+    // Main layout
     MotionLayout(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surface)
@@ -195,6 +201,7 @@ private fun HomePageContent(
                 .clip(CircleShape)
                 .clickable {
                     showSheet = true
+                    focusManager.clearFocus()
                 }
                 .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_round_menu),
@@ -208,6 +215,7 @@ private fun HomePageContent(
                 .clip(CircleShape)
                 .clickable {
                     showFilterDialog = true
+                    focusManager.clearFocus()
                 }
                 .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_filter_list),
@@ -223,7 +231,7 @@ private fun HomePageContent(
         )
 
 
-        // item list
+        // Item list
         LazyColumn(
             modifier = Modifier
                 .layoutId("list")
@@ -255,47 +263,57 @@ private fun HomePageContent(
         )
 
         // Filter dialog
-        if (showFilterDialog) {
-            focusManager.clearFocus()
-            FilterDialog(
-                onDismissRequest = {
-                    showFilterDialog = false
-                },
-                onItemSelected = {
-                    showFilterDialog = false
+        FilterDialog(
+            isShow = showFilterDialog,
+            onDismissRequest = {
+                it?.let {
                     onAction(UiEvent.FilterFoods(it))
-                },
-            )
+                }
+                showFilterDialog = false
+            }
+        )
+
+        // About Dialog
+        AboutAppDialog(showAboutAppDialog) {
+            showAboutAppDialog = false
         }
 
         // Language dialog
-        if (showLanguageDialog) {
-            LanguageChooseDialog(localeCode = uiState.localeCode) {
-                it?.let {
-                    onAction(UiEvent.ChangeLanguage(it.localeCode))
-                }
-                showLanguageDialog = false
+        LanguageChooseDialog(
+            isShow = showLanguageDialog,
+            localeCode = uiState.localeCode
+        ) {
+            it?.let {
+                onAction(UiEvent.ChangeLanguage(it.localeCode))
             }
-
+            showLanguageDialog = false
         }
 
-        if (showThemeDialog) {
-            ThemeModeDialog(themeCode = uiState.themeCode) {
-                it?.let {
-                    onAction(UiEvent.ChangeThemeMode(it.themeCode))
-                }
-                showThemeDialog = false
+        // Theme choose dialog
+        ThemeModeDialog(
+            isShow = showThemeDialog,
+            themeCode = uiState.themeCode
+        ) {
+            it?.let {
+                onAction(UiEvent.ChangeThemeMode(it.themeCode))
             }
+            showThemeDialog = false
         }
 
         // Setting bottom sheet
-        if (showSheet) {
-            focusManager.clearFocus()
-            SettingModalSheet {
-                showSheet = false
-                when (it) {
-                    0 -> showLanguageDialog = true
-                    1 -> showThemeDialog = true
+        SettingModalSheet(showSheet) {
+            showSheet = false
+            when (it) {
+                0 -> showLanguageDialog = true
+                1 -> showThemeDialog = true
+                2 -> showAboutAppDialog = true
+                3 -> {
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/dev?id=5729357381500909341")
+                        )
+                    )
                 }
             }
         }
@@ -499,7 +517,11 @@ private fun HomeSearchBarView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingModalSheet(onDismiss: (index: Int) -> Unit) {
+private fun SettingModalSheet(
+    isShow: Boolean,
+    onDismiss: (index: Int) -> Unit
+) {
+    if (!isShow) return
     val modalBottomSheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         onDismissRequest = { onDismiss(999) },
@@ -545,10 +567,11 @@ private fun SettingModalSheet(onDismiss: (index: Int) -> Unit) {
 
 @Composable
 private fun FilterDialog(
-    onDismissRequest: () -> Unit,
-    onItemSelected: (FilterType) -> Unit,
+    isShow: Boolean,
+    onDismissRequest: (item: FilterType?) -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    if (!isShow) return
+    Dialog(onDismissRequest = { onDismissRequest(null) }) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.filter_loading))
         val progress by animateLottieCompositionAsState(
             composition = composition,
@@ -556,12 +579,7 @@ private fun FilterDialog(
             iterations = LottieConstants.IterateForever,
         )
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = Shapes.medium,
-        ) {
+        Card(shape = Shapes.medium) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -579,7 +597,7 @@ private fun FilterDialog(
                     Column(
                         modifier = Modifier
                             .clickable {
-                                onItemSelected(item)
+                                onDismissRequest(item)
                             }
                             .padding(horizontal = Dimens.MARGIN_LARGE)
                     ) {
@@ -614,9 +632,11 @@ private fun FilterDialog(
 
 @Composable
 private fun LanguageChooseDialog(
+    isShow: Boolean,
     localeCode: String,
     onDismissRequest: (locale: Localization?) -> Unit,
 ) {
+    if (!isShow) return
     RadioSelectionDialog(
         items = ConstantValue.languageList,
         onDismissRequest = onDismissRequest
@@ -650,9 +670,11 @@ private fun LanguageChooseDialog(
 
 @Composable
 private fun ThemeModeDialog(
+    isShow: Boolean,
     themeCode: String,
     onDismissRequest: (themeMode: AppThemeMode?) -> Unit,
 ) {
+    if (!isShow) return
     RadioSelectionDialog(
         items = ConstantValue.appThemeModes,
         onDismissRequest = onDismissRequest
@@ -679,6 +701,26 @@ private fun ThemeModeDialog(
             Text(
                 text = stringResource(id = it.title),
                 modifier = Modifier.padding(start = Dimens.MARGIN_MEDIUM_2)
+            )
+        }
+    }
+}
+
+@Composable
+fun AboutAppDialog(
+    isShow: Boolean,
+    onDismissRequest: () -> Unit,
+) {
+    if (!isShow) return
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier.wrapContentHeight(),
+            shape = Shapes.medium
+        ) {
+            CoilAsyncImage(
+                modifier = Modifier.fillMaxWidth(),
+                imageUrl = R.drawable.fbad,
+                contentScale = ContentScale.Fit
             )
         }
     }
@@ -737,7 +779,8 @@ private fun HomePagePreviewNight() {
 private fun SettingModalSheetPreview() {
     FoodDiAppTheme {
         Surface {
-            SettingModalSheet {
+            SettingModalSheet(true) {
+
             }
         }
     }
@@ -749,8 +792,8 @@ private fun FilterDialogPreview() {
     FoodDiAppTheme {
         Surface {
             FilterDialog(
+                isShow = true,
                 onDismissRequest = {},
-                onItemSelected = {},
             )
         }
     }
@@ -762,9 +805,9 @@ private fun LanguageChooseDialogPreview() {
     FoodDiAppTheme {
         Surface {
             LanguageChooseDialog(
-                localeCode = Localization.ENGLISH,
-                onDismissRequest = {}
-            )
+                isShow = true,
+                localeCode = Localization.ENGLISH
+            ) {}
         }
     }
 }
@@ -775,9 +818,20 @@ private fun ThemeModeDialogPreview() {
     FoodDiAppTheme {
         Surface {
             ThemeModeDialog(
+                isShow = true,
                 themeCode = AppThemeMode.LIGHT_MODE,
-                onDismissRequest = {}
-            )
+            ) {}
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AboutAppDialogPreview() {
+    FoodDiAppTheme {
+        Surface {
+            AboutAppDialog(true) {
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(
 
     private fun startSplashScreen() {
         viewModelScope.launch {
-            delay(1000)
+            delay(2000)
             isSplashShow.value = false
         }
     }

@@ -25,12 +25,7 @@ fun <T> RadioSelectionDialog(
     content: @Composable (item: T) -> Unit
 ) {
     Dialog(onDismissRequest = { onDismissRequest(null) }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = Shapes.medium,
-        ) {
+        Card(shape = Shapes.medium) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
