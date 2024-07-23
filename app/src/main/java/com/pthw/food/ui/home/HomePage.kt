@@ -3,6 +3,7 @@ package com.pthw.food.ui.home
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,11 +33,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,19 +79,18 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
-import com.pthw.food.composable.CustomTextField
 import com.pthw.food.composable.LocalizationUpdater
 import com.pthw.food.composable.RadioSelectionDialog
 import com.pthw.food.composable.TitleTextView
 import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
+import com.pthw.food.data.model.Localization
+import com.pthw.food.ui.theme.ColorPrimary
 import com.pthw.food.ui.theme.Dimens
 import com.pthw.food.ui.theme.FoodDiAppTheme
 import com.pthw.food.ui.theme.Shapes
 import com.pthw.food.utils.ConstantValue
-import com.pthw.food.data.model.Localization
-import com.pthw.food.ui.theme.ColorPrimary
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -476,6 +480,9 @@ private fun HomeSearchBarView(
     iconClick: () -> Unit,
     onValueChange: (String) -> Unit
 ) {
+
+    var textSearchBox by rememberSaveable { mutableStateOf("") }
+
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(
@@ -498,16 +505,47 @@ private fun HomeSearchBarView(
                 contentDescription = ""
             )
 
-//            Timber.i("Locale: $localeCode")
-            CustomTextField(
+            TextField(
+                value = textSearchBox,
+                onValueChange = {
+                    textSearchBox = it
+                    onValueChange(it)
+                },
                 modifier = Modifier
-                    .height(52.dp)
-                    .fillMaxWidth()
-                    .padding(start = Dimens.MARGIN_MEDIUM),
-                placeholderText = hint
-            ) {
-                onValueChange(it)
-            }
+                    .wrapContentHeight()
+                    .fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = Dimens.TEXT_REGULAR
+                ),
+                placeholder = {
+                    Text(
+                        text = hint,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        fontSize = Dimens.TEXT_REGULAR
+                    )
+                },
+                trailingIcon = {
+                    AnimatedVisibility(textSearchBox.length > 1) {
+                        Icon(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable {
+                                    textSearchBox = ""
+                                    onValueChange("")
+                                }
+                                .padding(Dimens.MARGIN_MEDIUM),
+                            painter = painterResource(id = R.drawable.ic_delete_search),
+                            contentDescription = ""
+                        )
+                    }
+                }
+            )
         }
     }
 }

@@ -18,7 +18,7 @@ class MainViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
     val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
-    var isSplashShow = mutableStateOf(false)
+    var isSplashShow = mutableStateOf(true)
         private set
 
     init {

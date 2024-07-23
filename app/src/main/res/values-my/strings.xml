@@ -9,6 +9,10 @@
     <string name="snack">သရေစာများ</string>
     <string name="setting">ပြင်ဆင်ချက်များ</string>
     <string name="chooseLanguage">ဘာသာစကားရွေးရန်</string>
+    <string name="chooseThemeMode">အနက်ရောင်ပုံစံ</string>
     <string name="aboutApp">ဆော့ဝဲလ်အကြောင်း</string>
     <string name="moreApp">အခြားဆော့ဝဲလ်များ</string>
+    <string name="system_default_mode">စနစ်တွင်အသုံးပြုသောပုံစံ</string>
+    <string name="light_mode">အနက်ရောင် ပိတ်ရန်</string>
+    <string name="dark_mode">အနက်ရောင် ဖွင့်ရန်</string>
 </resources>

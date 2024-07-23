@@ -1,11 +1,6 @@
 <resources>
     <string name="eat">Food that should not eat together</string>
 
-
-    <string name="channel_name">Notifications</string>
-    <string name="channel_id">myChannelId</string>
-
-
     <string name="locale_english" translatable="false">&#127482;&#127480;\ \ \ \ \ \ English</string>
     <string name="locale_myanmar" translatable="false">&#127474;&#127474;\ \ \ \ \ \ မြန်မာ</string>
     <string name="search">Search..</string>
@@ -17,10 +12,10 @@
     <string name="snack">Snacks</string>
     <string name="setting">Setting</string>
     <string name="chooseLanguage">Choose Language</string>
-    <string name="chooseThemeMode">App Theme</string>
+    <string name="chooseThemeMode">Dark Mode</string>
     <string name="aboutApp">About App</string>
     <string name="moreApp">More Applications</string>
-    <string name="system_default_mode">System Theme</string>
-    <string name="light_mode">Light Theme</string>
-    <string name="dark_mode">Dark Theme</string>
+    <string name="system_default_mode">System Default</string>
+    <string name="light_mode">Dark Mode OFF</string>
+    <string name="dark_mode">Dark Mode ON</string>
 </resources>
