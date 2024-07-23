@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.pthw.food.theme.Dimens
-import com.pthw.food.theme.FoodDiAppTheme
+import com.pthw.food.ui.theme.Dimens
+import com.pthw.food.ui.theme.FoodDiAppTheme
 import timber.log.Timber
 
 /**

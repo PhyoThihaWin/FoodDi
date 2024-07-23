@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.pthw.food.theme.Dimens
-import com.pthw.food.theme.Shapes
+import com.pthw.food.ui.theme.Dimens
+import com.pthw.food.ui.theme.Shapes
 
 /**
  * Created by P.T.H.W on 23/07/2024.

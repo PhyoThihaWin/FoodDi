@@ -1,4 +1,4 @@
-package com.pthw.food.theme
+package com.pthw.food.ui.theme
 
 import android.app.Activity
 import android.os.Build

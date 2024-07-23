@@ -1,4 +1,4 @@
-package com.pthw.food.theme
+package com.pthw.food.ui.theme
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp

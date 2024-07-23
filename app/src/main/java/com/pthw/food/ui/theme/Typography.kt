@@ -1,4 +1,4 @@
-package com.pthw.food.theme
+package com.pthw.food.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.PlatformTextStyle

@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import com.pthw.food.theme.Dimens
+import com.pthw.food.ui.theme.Dimens
 
 /**
  * Created by P.T.H.W on 29/03/2024.

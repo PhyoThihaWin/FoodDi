@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pthw.food.theme
+package com.pthw.food.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

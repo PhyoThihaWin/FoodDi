@@ -1,4 +1,4 @@
-package com.pthw.food.ui.main
+package com.pthw.food.ui.home
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -8,7 +8,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -83,15 +81,14 @@ import com.pthw.food.composable.TitleTextView
 import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
-import com.pthw.food.theme.Dimens
-import com.pthw.food.theme.FoodDiAppTheme
-import com.pthw.food.theme.Shapes
+import com.pthw.food.ui.theme.Dimens
+import com.pthw.food.ui.theme.FoodDiAppTheme
+import com.pthw.food.ui.theme.Shapes
 import com.pthw.food.utils.ConstantValue
 import com.pthw.food.data.model.Localization
-import com.pthw.food.theme.ColorPrimary
+import com.pthw.food.ui.theme.ColorPrimary
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 
 /**
  * Created by P.T.H.W on 16/07/2024.
@@ -719,7 +716,7 @@ fun AboutAppDialog(
         ) {
             CoilAsyncImage(
                 modifier = Modifier.fillMaxWidth(),
-                imageUrl = R.drawable.fbad,
+                imageUrl = R.drawable.img_fooddi_landscape,
                 contentScale = ContentScale.Fit
             )
         }

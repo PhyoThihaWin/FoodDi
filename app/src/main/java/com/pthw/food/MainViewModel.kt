@@ -3,9 +3,7 @@ package com.pthw.food.ui
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.repository.CacheRepository
-import com.pthw.food.utils.ConstantValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest

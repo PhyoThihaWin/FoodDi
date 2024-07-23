@@ -1,4 +1,4 @@
-package com.pthw.food.ui.main
+package com.pthw.food.ui.home
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.pthw.food.R
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
-import com.pthw.food.data.model.Localization
 import com.pthw.food.data.repository.FoodRepository
 import com.pthw.food.data.repository.CacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
