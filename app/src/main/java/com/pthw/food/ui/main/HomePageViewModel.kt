@@ -11,6 +11,7 @@ import com.pthw.food.data.model.Localization
 import com.pthw.food.data.repository.FoodRepository
 import com.pthw.food.data.repository.CacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class HomePageViewModel @Inject constructor(
     private val repository: FoodRepository,
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
-    val appThemeMode = cacheRepository.getThemeMode()
+    val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
     val currentLanguage = cacheRepository.getLanguage()
 
     var pageTitle = mutableIntStateOf(R.string.app_name)
@@ -32,6 +33,7 @@ class HomePageViewModel @Inject constructor(
         private set
 
     init {
+        getThemeMode()
         getAllFood()
     }
 
@@ -66,6 +68,14 @@ class HomePageViewModel @Inject constructor(
     fun updateCachedThemeMode(theme: String) {
         viewModelScope.launch {
             cacheRepository.putThemeMode(theme)
+        }
+    }
+
+    private fun getThemeMode() {
+        viewModelScope.launch {
+            cacheRepository.getThemeMode().collectLatest {
+                appThemeMode.value = it
+            }
         }
     }
 

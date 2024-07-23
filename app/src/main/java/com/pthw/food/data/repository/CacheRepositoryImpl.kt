@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.Localization
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class CacheRepositoryImpl @Inject constructor(
@@ -29,11 +31,18 @@ class CacheRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getThemeModeNormal(): String {
+        return runBlocking {
+            dataStore.data.first()[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
+        }
+    }
+
     override fun getThemeMode(): Flow<String> {
         return dataStore.data.map {
             it[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
         }
     }
+
 
     override suspend fun putThemeMode(theme: String) {
         dataStore.edit {

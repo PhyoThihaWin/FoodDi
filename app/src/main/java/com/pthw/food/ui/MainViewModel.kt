@@ -8,6 +8,7 @@ import com.pthw.food.data.repository.CacheRepository
 import com.pthw.food.utils.ConstantValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,18 +19,27 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
-    val appThemeMode = cacheRepository.getThemeMode()
-    var isSplashShow = mutableStateOf(true)
+    val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
+    var isSplashShow = mutableStateOf(false)
         private set
 
     init {
         startSplashScreen()
+        getThemeMode()
     }
 
     private fun startSplashScreen() {
         viewModelScope.launch {
             delay(1000)
             isSplashShow.value = false
+        }
+    }
+
+    private fun getThemeMode() {
+        viewModelScope.launch {
+            cacheRepository.getThemeMode().collectLatest {
+                appThemeMode.value = it
+            }
         }
     }
 }

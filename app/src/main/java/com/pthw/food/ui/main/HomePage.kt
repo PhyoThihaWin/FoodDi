@@ -100,7 +100,7 @@ fun HomePage(
 
     HomePageContent(
         uiState = UiState(
-            themeCode = viewModel.appThemeMode.collectAsState(initial = AppThemeMode.SYSTEM_DEFAULT).value,
+            themeCode = viewModel.appThemeMode.value,
             localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
             pageTitle = viewModel.pageTitle.intValue,
             foods = viewModel.foods.value
@@ -197,7 +197,7 @@ private fun HomePageContent(
                     showSheet = true
                 }
                 .padding(Dimens.MARGIN_10),
-            painter = painterResource(id = R.drawable.ic_more_menu),
+            painter = painterResource(id = R.drawable.ic_round_menu),
             tint = if (isDarkMode) ColorPrimary else Color.White,
             contentDescription = ""
         )
