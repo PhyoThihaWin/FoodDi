@@ -1,9 +1,11 @@
 package com.pthw.food.data.repository
 
+import kotlinx.coroutines.flow.Flow
+
 interface CacheRepository {
-    suspend fun getLanguage(): String
+    fun getLanguage(): Flow<String>
     suspend fun putLanguage(localeCode: String)
 
-    suspend fun getThemeMode(): String
+    fun getThemeMode(): Flow<String>
     suspend fun putThemeMode(theme: String)
 }

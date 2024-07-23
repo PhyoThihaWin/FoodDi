@@ -1,42 +1,43 @@
 package com.pthw.food.data.repository
 
-import android.content.Context
-import androidx.core.content.edit
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.Localization
-import com.pthw.food.utils.ConstantValue
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CacheRepositoryImpl @Inject constructor(
-    @ApplicationContext context: Context
+    private val dataStore: DataStore<Preferences>
 ) : CacheRepository {
-    private val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
-    companion object {
-        private const val PREF_NAME = "pref.foodDi"
-        private const val PREF_KEY_LANGUAGE = "language.key"
-        private const val PREF_KEY_THEME_MODE = "theme_mode.key"
-    }
+    private val PREF_KEY_LANGUAGE = stringPreferencesKey("language.key")
+    private val PREF_KEY_THEME_MODE = stringPreferencesKey("theme_mode.key")
 
-    override suspend fun getLanguage(): String {
-        return sharedPreferences.getString(PREF_KEY_LANGUAGE, Localization.ENGLISH)
-            ?: Localization.ENGLISH
-    }
-
-    override suspend fun putLanguage(localeCode: String) {
-        sharedPreferences.edit {
-            putString(PREF_KEY_LANGUAGE, localeCode)
+    override fun getLanguage(): Flow<String> {
+        return dataStore.data.map {
+            it[PREF_KEY_LANGUAGE] ?: Localization.ENGLISH
         }
     }
 
-    override suspend fun getThemeMode(): String {
-        return sharedPreferences.getString(PREF_KEY_THEME_MODE, null)
-            ?: ConstantValue.SYSTEM_DEFAULT
+    override suspend fun putLanguage(localeCode: String) {
+        dataStore.edit {
+            it[PREF_KEY_LANGUAGE] = localeCode
+        }
+    }
+
+    override fun getThemeMode(): Flow<String> {
+        return dataStore.data.map {
+            it[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
+        }
     }
 
     override suspend fun putThemeMode(theme: String) {
-        sharedPreferences.edit {
-            putString(PREF_KEY_THEME_MODE, theme)
+        dataStore.edit {
+            it[PREF_KEY_THEME_MODE] = theme
         }
     }
 

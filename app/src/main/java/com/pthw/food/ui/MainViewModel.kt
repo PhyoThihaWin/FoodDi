@@ -3,6 +3,7 @@ package com.pthw.food.ui
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.repository.CacheRepository
 import com.pthw.food.utils.ConstantValue
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,38 +18,18 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
-
+    val appThemeMode = cacheRepository.getThemeMode()
     var isSplashShow = mutableStateOf(true)
         private set
 
-    var appThemeMode = mutableStateOf(ConstantValue.SYSTEM_DEFAULT)
-        private set
-
     init {
-        // splash
         startSplashScreen()
-
-        // theme
-        getCachedThemeMode()
     }
 
     private fun startSplashScreen() {
         viewModelScope.launch {
-            delay(3000)
+            delay(1000)
             isSplashShow.value = false
-        }
-    }
-
-    fun updateCachedThemeMode(theme: String) {
-        viewModelScope.launch {
-            cacheRepository.putThemeMode(theme)
-            getCachedThemeMode()
-        }
-    }
-
-    private fun getCachedThemeMode() {
-        viewModelScope.launch {
-            appThemeMode.value = cacheRepository.getThemeMode()
         }
     }
 }

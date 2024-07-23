@@ -76,6 +76,10 @@
     <string name="snack">Snacks</string>
     <string name="setting">Setting</string>
     <string name="chooseLanguage">Choose Language</string>
+    <string name="chooseThemeMode">App Theme</string>
     <string name="aboutApp">About App</string>
     <string name="moreApp">More Applications</string>
+    <string name="system_default_mode">System Theme</string>
+    <string name="light_mode">Light Theme</string>
+    <string name="dark_mode">Dark Theme</string>
 </resources>

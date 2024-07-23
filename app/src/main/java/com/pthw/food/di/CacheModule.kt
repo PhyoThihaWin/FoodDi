@@ -1,6 +1,7 @@
 package com.pthw.food.di
 
 import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.pthw.food.data.database.AppDatabase
 import dagger.Module
@@ -24,5 +25,11 @@ object DatabaseModule {
             .createFromAsset("database/fooddi.db")
             .fallbackToDestructiveMigration().build()
     }
+
+
+    @Provides
+    @Singleton
+    fun providePreferenceDataStore(@ApplicationContext context: Context) = context.dataStore
+    private val Context.dataStore by preferencesDataStore("pref.foodDi")
 
 }

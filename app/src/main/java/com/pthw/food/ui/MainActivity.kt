@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.theme.FoodDiAppTheme
 import com.pthw.food.ui.main.HomePage
 import com.pthw.food.utils.ConstantValue
@@ -25,15 +27,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FoodDiAppTheme(
-                darkTheme = when (viewModel.appThemeMode.value) {
-                    ConstantValue.LIGHT_MODE -> false
-                    ConstantValue.DARK_MODE -> true
-                    else -> isSystemInDarkTheme()
-                },
+                darkTheme = AppThemeMode.isDarkMode(viewModel.appThemeMode.collectAsState(initial = AppThemeMode.SYSTEM_DEFAULT).value),
             ) {
-                HomePage(darkTheme = it) {
-                    viewModel.updateCachedThemeMode(it)
-                }
+                HomePage()
             }
         }
     }

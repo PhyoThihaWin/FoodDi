@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,12 +70,13 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.google.android.material.color.MaterialColors
 import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
 import com.pthw.food.composable.CustomTextField
 import com.pthw.food.composable.LocalizationUpdater
+import com.pthw.food.composable.RadioSelectionDialog
 import com.pthw.food.composable.TitleTextView
+import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
 import com.pthw.food.theme.Dimens
@@ -84,6 +86,7 @@ import com.pthw.food.utils.ConstantValue
 import com.pthw.food.data.model.Localization
 import com.pthw.food.theme.ColorPrimary
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -91,14 +94,14 @@ import java.util.*
  */
 @Composable
 fun HomePage(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    viewModel: HomePageViewModel = hiltViewModel(),
-    onThemeChange: (theme: String) -> Unit
+    viewModel: HomePageViewModel = hiltViewModel()
 ) {
+    Timber.i("Reached: HomePage")
+
     HomePageContent(
         uiState = UiState(
-            darkTheme = darkTheme,
-            localeCode = viewModel.currentLanguage.value,
+            themeCode = viewModel.appThemeMode.collectAsState(initial = AppThemeMode.SYSTEM_DEFAULT).value,
+            localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
             pageTitle = viewModel.pageTitle.intValue,
             foods = viewModel.foods.value
         ),
@@ -121,16 +124,15 @@ fun HomePage(
                 }
 
                 is UiEvent.ChangeThemeMode -> {
-                    onThemeChange(it.theme)
+                    viewModel.updateCachedThemeMode(it.theme)
                 }
-
             }
         }
     )
 }
 
 private data class UiState(
-    val darkTheme: Boolean = false,
+    val themeCode: String,
     val localeCode: String,
     val pageTitle: Int = R.string.app_name,
     val foods: List<Food> = emptyList()
@@ -148,6 +150,7 @@ private fun HomePageContent(
     uiState: UiState,
     onAction: (UiEvent) -> Unit = {}
 ) {
+    val isDarkMode = AppThemeMode.isDarkMode(uiState.themeCode)
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
     val isScrolledOnTop by remember {
@@ -162,6 +165,7 @@ private fun HomePageContent(
     val configuration = LocalConfiguration.current
     var showFilterDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
 
     // set locale
@@ -182,7 +186,7 @@ private fun HomePageContent(
                 .layoutId("background")
                 .fillMaxWidth()
                 .fillMaxHeight(0.2f)
-                .background(color = if (uiState.darkTheme) MaterialTheme.colorScheme.background else ColorPrimary)
+                .background(color = if (isDarkMode) MaterialTheme.colorScheme.background else ColorPrimary)
         )
 
         Icon(
@@ -190,12 +194,11 @@ private fun HomePageContent(
                 .layoutId("setting")
                 .clip(CircleShape)
                 .clickable {
-//                    showSheet = true
-                    onAction(UiEvent.ChangeThemeMode(ConstantValue.LIGHT_MODE))
+                    showSheet = true
                 }
                 .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_more_menu),
-            tint = if (uiState.darkTheme) ColorPrimary else Color.White,
+            tint = if (isDarkMode) ColorPrimary else Color.White,
             contentDescription = ""
         )
 
@@ -204,23 +207,18 @@ private fun HomePageContent(
                 .layoutId("filter")
                 .clip(CircleShape)
                 .clickable {
-//                    showFilterDialog = true
-                    onAction(UiEvent.ChangeThemeMode(ConstantValue.DARK_MODE))
+                    showFilterDialog = true
                 }
                 .padding(Dimens.MARGIN_10),
             painter = painterResource(id = R.drawable.ic_filter_list),
-            tint = if (uiState.darkTheme) ColorPrimary else Color.White,
+            tint = if (isDarkMode) ColorPrimary else Color.White,
             contentDescription = ""
         )
 
         TitleTextView(
-            modifier = Modifier
-                .layoutId("title")
-                .clickable {
-                    onAction(UiEvent.ChangeThemeMode(ConstantValue.SYSTEM_DEFAULT))
-                },
+            modifier = Modifier.layoutId("title"),
             text = stringResource(id = uiState.pageTitle),
-            color = if (uiState.darkTheme) ColorPrimary else Color.White,
+            color = if (isDarkMode) ColorPrimary else Color.White,
             fontSize = Dimens.TEXT_HEADING_2
         )
 
@@ -272,16 +270,22 @@ private fun HomePageContent(
 
         // Language dialog
         if (showLanguageDialog) {
-            focusManager.clearFocus()
-            LanguageChooseDialog(
-                localeCode = uiState.localeCode,
-                onDismissRequest = {
-                    it?.let {
-                        onAction(UiEvent.ChangeLanguage(it.localeCode))
-                    }
-                    showLanguageDialog = false
-                },
-            )
+            LanguageChooseDialog(localeCode = uiState.localeCode) {
+                it?.let {
+                    onAction(UiEvent.ChangeLanguage(it.localeCode))
+                }
+                showLanguageDialog = false
+            }
+
+        }
+
+        if (showThemeDialog) {
+            ThemeModeDialog(themeCode = uiState.themeCode) {
+                it?.let {
+                    onAction(UiEvent.ChangeThemeMode(it.themeCode))
+                }
+                showThemeDialog = false
+            }
         }
 
         // Setting bottom sheet
@@ -289,8 +293,9 @@ private fun HomePageContent(
             focusManager.clearFocus()
             SettingModalSheet {
                 showSheet = false
-                if (it == 0) {
-                    showLanguageDialog = true
+                when (it) {
+                    0 -> showLanguageDialog = true
+                    1 -> showThemeDialog = true
                 }
             }
         }
@@ -606,104 +611,75 @@ private fun FilterDialog(
     }
 }
 
+
 @Composable
 private fun LanguageChooseDialog(
     localeCode: String,
     onDismissRequest: (locale: Localization?) -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismissRequest(null) }) {
-        Card(
-            modifier = Modifier
+    RadioSelectionDialog(
+        items = ConstantValue.languageList,
+        onDismissRequest = onDismissRequest
+    ) {
+        Row(
+            Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = Shapes.medium,
+                .height(56.dp)
+                .selectable(
+                    selected = (it.localeCode == localeCode),
+                    enabled = (it.localeCode != localeCode),
+                    onClick = {
+                        onDismissRequest(it)
+                    },
+                    role = Role.RadioButton
+                )
+                .padding(horizontal = Dimens.MARGIN_20),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                ConstantValue.languageList.forEachIndexed { index, item ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = (item.localeCode == localeCode),
-                                enabled = (item.localeCode != localeCode),
-                                onClick = {
-                                    onDismissRequest(item)
-                                },
-                                role = Role.RadioButton
-                            )
-                            .padding(horizontal = Dimens.MARGIN_20),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (item.localeCode == localeCode),
-                            onClick = null
-                        )
-                        Text(
-                            text = stringResource(id = item.title),
-                            modifier = Modifier.padding(start = Dimens.MARGIN_MEDIUM_2)
-                        )
-                    }
-                }
-            }
+            RadioButton(
+                selected = (it.localeCode == localeCode),
+                onClick = null
+            )
+            Text(
+                text = stringResource(id = it.title),
+                modifier = Modifier.padding(start = Dimens.MARGIN_MEDIUM_2)
+            )
         }
     }
 }
 
 @Composable
 private fun ThemeModeDialog(
-    localeCode: String,
-    onDismissRequest: () -> Unit,
+    themeCode: String,
+    onDismissRequest: (themeMode: AppThemeMode?) -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
-        Card(
-            modifier = Modifier
+    RadioSelectionDialog(
+        items = ConstantValue.appThemeModes,
+        onDismissRequest = onDismissRequest
+    ) {
+        Row(
+            Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = Shapes.medium,
+                .height(56.dp)
+                .selectable(
+                    selected = (it.themeCode == themeCode),
+                    enabled = (it.themeCode != themeCode),
+                    onClick = {
+                        onDismissRequest(it)
+                    },
+                    role = Role.RadioButton
+                )
+                .padding(horizontal = Dimens.MARGIN_20),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                ConstantValue.appThemeModes.forEachIndexed { index, item ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = (item.second == localeCode),
-                                enabled = (item.second != localeCode),
-                                onClick = {
-                                    onDismissRequest()
-                                },
-                                role = Role.RadioButton
-                            )
-                            .padding(horizontal = Dimens.MARGIN_20),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (item.second == localeCode),
-                            onClick = null
-                        )
-                        Text(
-                            text = stringResource(id = item.first),
-                            modifier = Modifier.padding(start = Dimens.MARGIN_MEDIUM_2)
-                        )
-                    }
-                }
-            }
+            RadioButton(
+                selected = (it.themeCode == themeCode),
+                onClick = null
+            )
+            Text(
+                text = stringResource(id = it.title),
+                modifier = Modifier.padding(start = Dimens.MARGIN_MEDIUM_2)
+            )
         }
     }
 }
@@ -715,6 +691,7 @@ private fun HomePagePreview() {
         Surface {
             HomePageContent(
                 uiState = UiState(
+                    themeCode = AppThemeMode.LIGHT_MODE,
                     localeCode = Localization.ENGLISH,
                     foods = listOf(
                         Food.fake(),
@@ -738,7 +715,7 @@ private fun HomePagePreviewNight() {
         Surface {
             HomePageContent(
                 uiState = UiState(
-                    darkTheme = true,
+                    themeCode = AppThemeMode.DARK_MODE,
                     localeCode = Localization.ENGLISH,
                     foods = listOf(
                         Food.fake(),
@@ -798,7 +775,7 @@ private fun ThemeModeDialogPreview() {
     FoodDiAppTheme {
         Surface {
             ThemeModeDialog(
-                localeCode = Localization.ENGLISH,
+                themeCode = AppThemeMode.LIGHT_MODE,
                 onDismissRequest = {}
             )
         }

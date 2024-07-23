@@ -23,16 +23,15 @@ class HomePageViewModel @Inject constructor(
     private val repository: FoodRepository,
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
+    val appThemeMode = cacheRepository.getThemeMode()
+    val currentLanguage = cacheRepository.getLanguage()
 
     var pageTitle = mutableIntStateOf(R.string.app_name)
         private set
     var foods = mutableStateOf<List<Food>>(emptyList())
         private set
-    var currentLanguage = mutableStateOf(Localization.ENGLISH)
-        private set
 
     init {
-        getLanguageCache()
         getAllFood()
     }
 
@@ -61,13 +60,12 @@ class HomePageViewModel @Inject constructor(
     fun updateLanguageCache(localeCode: String) {
         viewModelScope.launch {
             cacheRepository.putLanguage(localeCode)
-            getLanguageCache()
         }
     }
 
-    private fun getLanguageCache() {
+    fun updateCachedThemeMode(theme: String) {
         viewModelScope.launch {
-            currentLanguage.value = cacheRepository.getLanguage()
+            cacheRepository.putThemeMode(theme)
         }
     }
 

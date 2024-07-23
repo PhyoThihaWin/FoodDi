@@ -1,6 +1,7 @@
 package com.pthw.food.utils
 
 import com.pthw.food.R
+import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Localization
 
@@ -21,6 +22,7 @@ object ConstantValue {
 
     val settingList = listOf(
         Pair(R.drawable.ic_settings, R.string.chooseLanguage),
+        Pair(R.drawable.ic_round_dark_mode, R.string.chooseThemeMode),
         Pair(R.drawable.ic_info, R.string.aboutApp),
         Pair(R.drawable.ic_more_app, R.string.moreApp),
     )
@@ -30,13 +32,9 @@ object ConstantValue {
         Localization(R.string.locale_myanmar, Localization.MYANMAR)
     )
 
-    const val LIGHT_MODE = "light_mode"
-    const val DARK_MODE = "dark_mode"
-    const val SYSTEM_DEFAULT = "system_default"
-
     val appThemeModes = listOf(
-        Pair(R.string.app_name, SYSTEM_DEFAULT),
-        Pair(R.string.all, LIGHT_MODE),
-        Pair(R.string.search, DARK_MODE)
+        AppThemeMode(R.string.system_default_mode, AppThemeMode.SYSTEM_DEFAULT),
+        AppThemeMode(R.string.light_mode, AppThemeMode.LIGHT_MODE),
+        AppThemeMode(R.string.dark_mode, AppThemeMode.DARK_MODE)
     )
 }
