@@ -25,11 +25,10 @@ android {
 
     buildTypes {
         getByName("release") {
+            isDebuggable = false
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -114,4 +113,13 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.50")
     ksp("com.google.dagger:hilt-compiler:2.50")
+
+    // Iron source
+    implementation("com.ironsource.sdk:mediationsdk:8.2.1")
+    implementation("com.ironsource:adqualitysdk:7.20.2")
+
+    // Google identifier
+    implementation("com.google.android.gms:play-services-appset:16.1.0")
+    implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
+    implementation("com.google.android.gms:play-services-basement:18.4.0")
 }

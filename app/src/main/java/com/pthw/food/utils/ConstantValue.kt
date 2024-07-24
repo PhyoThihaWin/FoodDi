@@ -6,7 +6,7 @@ import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Localization
 
 object ConstantValue {
-    var lang = "english"
+    const val INTERSTITIAL_COUNT = 20
 
     const val IMAGE_PATH =
         "https://firebasestorage.googleapis.com/v0/b/fooddi-3ca51.appspot.com/o/%s?alt=media"

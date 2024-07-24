@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -86,6 +88,8 @@ import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
 import com.pthw.food.data.model.Localization
+import com.pthw.food.ui.home.ironsource.IronSourceBanner
+import com.pthw.food.ui.home.ironsource.ironSourceInterstitial
 import com.pthw.food.ui.theme.ColorPrimary
 import com.pthw.food.ui.theme.Dimens
 import com.pthw.food.ui.theme.FoodDiAppTheme
@@ -102,37 +106,50 @@ fun HomePage(
     viewModel: HomePageViewModel = hiltViewModel()
 ) {
     Timber.i("Reached: HomePage")
+    var clickCount by remember { mutableIntStateOf(0) }
+
     HomePageContent(
-        uiState = UiState(
+        UiState(
             themeCode = viewModel.appThemeMode.value,
             localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
             pageTitle = viewModel.pageTitle.intValue,
             foods = viewModel.foods.value
-        ),
-        onAction = {
-            when (it) {
-                is UiEvent.SearchFoods -> {
-                    viewModel.getSearchFoods(it.search)
-                }
+        )
+    ) {
+        when (it) {
+            is UiEvent.SearchFoods -> {
+                clickCount++
+                viewModel.getSearchFoods(it.search)
+            }
 
-                is UiEvent.FilterFoods -> {
-                    if (it.filterType.type == null) {
-                        viewModel.getAllFood()
-                    } else {
-                        viewModel.getFoodsByType(it.filterType)
-                    }
-                }
-
-                is UiEvent.ChangeLanguage -> {
-                    viewModel.updateLanguageCache(it.localeCode)
-                }
-
-                is UiEvent.ChangeThemeMode -> {
-                    viewModel.updateCachedThemeMode(it.theme)
+            is UiEvent.FilterFoods -> {
+                clickCount++
+                if (it.filterType.type == null) {
+                    viewModel.getAllFood()
+                } else {
+                    viewModel.getFoodsByType(it.filterType)
                 }
             }
+
+            is UiEvent.ChangeLanguage -> {
+                clickCount++
+                viewModel.updateLanguageCache(it.localeCode)
+            }
+
+            is UiEvent.ChangeThemeMode -> {
+                clickCount++
+                viewModel.updateCachedThemeMode(it.theme)
+            }
         }
-    )
+    }
+
+
+    // interstitial ad
+    if (clickCount > ConstantValue.INTERSTITIAL_COUNT) {
+        clickCount = 0
+        LocalFocusManager.current.clearFocus()
+        ironSourceInterstitial()
+    }
 }
 
 private data class UiState(
@@ -177,149 +194,155 @@ private fun HomePageContent(
     // Set locale
     LocalizationUpdater(uiState.localeCode)
 
-    // Main layout
-    MotionLayout(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surface)
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        start = startConstraintSet,
-        end = endConstraintSet,
-        progress = progress
-    ) {
-
-        Spacer(
+    Box {
+        // Main layout
+        MotionLayout(
             modifier = Modifier
-                .layoutId("background")
+                .background(color = MaterialTheme.colorScheme.surface)
                 .fillMaxWidth()
-                .fillMaxHeight(0.2f)
-                .background(color = if (isDarkMode) MaterialTheme.colorScheme.background else ColorPrimary)
-        )
-
-        Icon(
-            modifier = Modifier
-                .layoutId("setting")
-                .clip(CircleShape)
-                .clickable {
-                    showSheet = true
-                    focusManager.clearFocus()
-                }
-                .padding(Dimens.MARGIN_10),
-            painter = painterResource(id = R.drawable.ic_round_menu),
-            tint = if (isDarkMode) ColorPrimary else Color.White,
-            contentDescription = ""
-        )
-
-        Icon(
-            modifier = Modifier
-                .layoutId("filter")
-                .clip(CircleShape)
-                .clickable {
-                    showFilterDialog = true
-                    focusManager.clearFocus()
-                }
-                .padding(Dimens.MARGIN_10),
-            painter = painterResource(id = R.drawable.ic_filter_list),
-            tint = if (isDarkMode) ColorPrimary else Color.White,
-            contentDescription = ""
-        )
-
-        TitleTextView(
-            modifier = Modifier.layoutId("title"),
-            text = stringResource(id = uiState.pageTitle),
-            color = if (isDarkMode) ColorPrimary else Color.White,
-            fontSize = Dimens.TEXT_HEADING_2
-        )
-
-
-        // Item list
-        LazyColumn(
-            modifier = Modifier
-                .layoutId("list")
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = Dimens.MARGIN_LARGE,
-                bottom = (configuration.screenHeightDp / 4).dp
-            ),
-            state = scrollState,
+                .fillMaxHeight(),
+            start = startConstraintSet,
+            end = endConstraintSet,
+            progress = progress
         ) {
-            items(uiState.foods) {
-                FoodListItemView(localeCode = uiState.localeCode, food = it)
-            }
-        }
+
+            Spacer(
+                modifier = Modifier
+                    .layoutId("background")
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.2f)
+                    .background(color = if (isDarkMode) MaterialTheme.colorScheme.background else ColorPrimary)
+            )
+
+            Icon(
+                modifier = Modifier
+                    .layoutId("setting")
+                    .clip(CircleShape)
+                    .clickable {
+                        showSheet = true
+                        focusManager.clearFocus()
+                    }
+                    .padding(Dimens.MARGIN_10),
+                painter = painterResource(id = R.drawable.ic_round_menu),
+                tint = if (isDarkMode) ColorPrimary else Color.White,
+                contentDescription = ""
+            )
+
+            Icon(
+                modifier = Modifier
+                    .layoutId("filter")
+                    .clip(CircleShape)
+                    .clickable {
+                        showFilterDialog = true
+                        focusManager.clearFocus()
+                    }
+                    .padding(Dimens.MARGIN_10),
+                painter = painterResource(id = R.drawable.ic_filter_list),
+                tint = if (isDarkMode) ColorPrimary else Color.White,
+                contentDescription = ""
+            )
+
+            TitleTextView(
+                modifier = Modifier.layoutId("title"),
+                text = stringResource(id = uiState.pageTitle),
+                color = if (isDarkMode) ColorPrimary else Color.White,
+                fontSize = Dimens.TEXT_HEADING_2
+            )
 
 
-        // searchBox
-        HomeSearchBarView(
-            modifier = Modifier.layoutId("search"),
-            hint = stringResource(id = R.string.search),
-            iconClick = {
-                coroutineScope.launch {
-                    scrollState.animateScrollToItem(0)
+            // Item list
+            LazyColumn(
+                modifier = Modifier
+                    .layoutId("list")
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                    top = Dimens.MARGIN_LARGE,
+                    bottom = (configuration.screenHeightDp / 4).dp
+                ),
+                state = scrollState,
+            ) {
+                items(uiState.foods) {
+                    FoodListItemView(localeCode = uiState.localeCode, food = it)
                 }
-            },
-            onValueChange = {
-                onAction(UiEvent.SearchFoods(it))
             }
-        )
 
-        // Filter dialog
-        FilterDialog(
-            isShow = showFilterDialog,
-            onDismissRequest = {
+
+            // searchBox
+            HomeSearchBarView(
+                modifier = Modifier.layoutId("search"),
+                hint = stringResource(id = R.string.search),
+                iconClick = {
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(0)
+                    }
+                },
+                onValueChange = {
+                    onAction(UiEvent.SearchFoods(it))
+                }
+            )
+
+            // Filter dialog
+            FilterDialog(
+                isShow = showFilterDialog,
+                onDismissRequest = {
+                    it?.let {
+                        onAction(UiEvent.FilterFoods(it))
+                    }
+                    showFilterDialog = false
+                }
+            )
+
+            // About Dialog
+            AboutAppDialog(showAboutAppDialog) {
+                showAboutAppDialog = false
+            }
+
+            // Language dialog
+            LanguageChooseDialog(
+                isShow = showLanguageDialog,
+                localeCode = uiState.localeCode
+            ) {
                 it?.let {
-                    onAction(UiEvent.FilterFoods(it))
+                    onAction(UiEvent.ChangeLanguage(it.localeCode))
                 }
-                showFilterDialog = false
+                showLanguageDialog = false
             }
-        )
 
-        // About Dialog
-        AboutAppDialog(showAboutAppDialog) {
-            showAboutAppDialog = false
-        }
-
-        // Language dialog
-        LanguageChooseDialog(
-            isShow = showLanguageDialog,
-            localeCode = uiState.localeCode
-        ) {
-            it?.let {
-                onAction(UiEvent.ChangeLanguage(it.localeCode))
+            // Theme choose dialog
+            ThemeModeDialog(
+                isShow = showThemeDialog,
+                themeCode = uiState.themeCode
+            ) {
+                it?.let {
+                    onAction(UiEvent.ChangeThemeMode(it.themeCode))
+                }
+                showThemeDialog = false
             }
-            showLanguageDialog = false
-        }
 
-        // Theme choose dialog
-        ThemeModeDialog(
-            isShow = showThemeDialog,
-            themeCode = uiState.themeCode
-        ) {
-            it?.let {
-                onAction(UiEvent.ChangeThemeMode(it.themeCode))
-            }
-            showThemeDialog = false
-        }
-
-        // Setting bottom sheet
-        SettingModalSheet(showSheet) {
-            showSheet = false
-            when (it) {
-                0 -> showLanguageDialog = true
-                1 -> showThemeDialog = true
-                2 -> showAboutAppDialog = true
-                3 -> {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("https://play.google.com/store/apps/dev?id=5729357381500909341")
+            // Setting bottom sheet
+            SettingModalSheet(showSheet) {
+                showSheet = false
+                when (it) {
+                    0 -> showLanguageDialog = true
+                    1 -> showThemeDialog = true
+                    2 -> showAboutAppDialog = true
+                    3 -> {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/dev?id=5729357381500909341")
+                            )
                         )
-                    )
+                    }
                 }
             }
+
         }
 
+        // banner ad
+        IronSourceBanner(Modifier.align(Alignment.BottomCenter))
     }
+
 }
 
 private val startConstraintSet = ConstraintSet {
