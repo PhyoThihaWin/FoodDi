@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:width="150dp"
-        android:height="30dp"
-        android:drawable="@drawable/phyothiha_text"
+        android:width="160dp"
+        android:height="60dp"
+        android:drawable="@drawable/img_splash_screen_branding"
         android:gravity="center" />
 </layer-list>

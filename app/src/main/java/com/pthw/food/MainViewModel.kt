@@ -1,4 +1,4 @@
-package com.pthw.food.ui
+package com.pthw.food
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

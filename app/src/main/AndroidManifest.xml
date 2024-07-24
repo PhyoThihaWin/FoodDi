@@ -5,9 +5,9 @@
 
     <application
         android:name=".FoodDiApp"
-        android:icon="@drawable/logo_border"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logo_border"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
