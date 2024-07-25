@@ -79,6 +79,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.facebook.ads.AdSize
 import com.pthw.food.R
 import com.pthw.food.composable.CoilAsyncImage
 import com.pthw.food.composable.LocalizationUpdater
@@ -88,8 +89,8 @@ import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
 import com.pthw.food.data.model.Localization
-import com.pthw.food.ui.home.ironsource.IronSourceBanner
-import com.pthw.food.ui.home.ironsource.ironSourceInterstitial
+import com.pthw.food.ui.home.adview.MetaBanner
+import com.pthw.food.ui.home.adview.MetaInterstitial
 import com.pthw.food.ui.theme.ColorPrimary
 import com.pthw.food.ui.theme.Dimens
 import com.pthw.food.ui.theme.FoodDiAppTheme
@@ -108,48 +109,51 @@ fun HomePage(
     Timber.i("Reached: HomePage")
     var clickCount by remember { mutableIntStateOf(0) }
 
-    HomePageContent(
-        UiState(
-            themeCode = viewModel.appThemeMode.value,
-            localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
-            pageTitle = viewModel.pageTitle.intValue,
-            foods = viewModel.foods.value
-        )
-    ) {
-        when (it) {
-            is UiEvent.SearchFoods -> {
-                clickCount++
-                viewModel.getSearchFoods(it.search)
-            }
+    Box {
+        HomePageContent(
+            UiState(
+                themeCode = viewModel.appThemeMode.value,
+                localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
+                pageTitle = viewModel.pageTitle.intValue,
+                foods = viewModel.foods.value
+            )
+        ) {
+            when (it) {
+                is UiEvent.SearchFoods -> {
+                    clickCount++
+                    viewModel.getSearchFoods(it.search)
+                }
 
-            is UiEvent.FilterFoods -> {
-                clickCount++
-                if (it.filterType.type == null) {
-                    viewModel.getAllFood()
-                } else {
-                    viewModel.getFoodsByType(it.filterType)
+                is UiEvent.FilterFoods -> {
+                    clickCount++
+                    if (it.filterType.type == null) {
+                        viewModel.getAllFood()
+                    } else {
+                        viewModel.getFoodsByType(it.filterType)
+                    }
+                }
+
+                is UiEvent.ChangeLanguage -> {
+                    clickCount++
+                    viewModel.updateLanguageCache(it.localeCode)
+                }
+
+                is UiEvent.ChangeThemeMode -> {
+                    clickCount++
+                    viewModel.updateCachedThemeMode(it.theme)
                 }
             }
+        }
 
-            is UiEvent.ChangeLanguage -> {
-                clickCount++
-                viewModel.updateLanguageCache(it.localeCode)
-            }
-
-            is UiEvent.ChangeThemeMode -> {
-                clickCount++
-                viewModel.updateCachedThemeMode(it.theme)
+        // interstitial ad
+        if (clickCount > ConstantValue.INTERSTITIAL_COUNT) {
+            LocalFocusManager.current.clearFocus()
+            MetaInterstitial {
+                clickCount = 0
             }
         }
     }
 
-
-    // interstitial ad
-    if (clickCount > ConstantValue.INTERSTITIAL_COUNT) {
-        clickCount = 0
-        LocalFocusManager.current.clearFocus()
-        ironSourceInterstitial()
-    }
 }
 
 private data class UiState(
@@ -261,8 +265,8 @@ private fun HomePageContent(
                 ),
                 state = scrollState,
             ) {
-                items(uiState.foods) {
-                    FoodListItemView(localeCode = uiState.localeCode, food = it)
+                items(uiState.foods) { item ->
+                    FoodListItemView(localeCode = uiState.localeCode, food = item)
                 }
             }
 
@@ -340,7 +344,10 @@ private fun HomePageContent(
         }
 
         // banner ad
-        IronSourceBanner(Modifier.align(Alignment.BottomCenter))
+        MetaBanner(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            adSize = AdSize.BANNER_HEIGHT_50
+        )
     }
 
 }
@@ -542,6 +549,7 @@ private fun HomeSearchBarView(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 ),
+                singleLine = true,
                 textStyle = LocalTextStyle.current.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = Dimens.TEXT_REGULAR

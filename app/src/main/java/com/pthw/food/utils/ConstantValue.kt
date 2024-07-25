@@ -6,7 +6,7 @@ import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Localization
 
 object ConstantValue {
-    const val INTERSTITIAL_COUNT = 20
+    const val INTERSTITIAL_COUNT = 10
 
     const val IMAGE_PATH =
         "https://firebasestorage.googleapis.com/v0/b/fooddi-3ca51.appspot.com/o/%s?alt=media"
@@ -34,7 +34,7 @@ object ConstantValue {
 
     val appThemeModes = listOf(
         AppThemeMode(R.string.system_default_mode, AppThemeMode.SYSTEM_DEFAULT),
-        AppThemeMode(R.string.light_mode, AppThemeMode.LIGHT_MODE),
-        AppThemeMode(R.string.dark_mode, AppThemeMode.DARK_MODE)
+        AppThemeMode(R.string.dark_mode, AppThemeMode.DARK_MODE),
+        AppThemeMode(R.string.light_mode, AppThemeMode.LIGHT_MODE)
     )
 }

@@ -1,6 +1,7 @@
 package com.pthw.food
 
 import android.app.Application
+import com.pthw.food.utils.AudienceNetworkInitializeHelper
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -13,6 +14,9 @@ class FoodDiApp : Application() {
     override fun onCreate() {
         super.onCreate()
         setupTimber()
+
+        // meta audience network
+        AudienceNetworkInitializeHelper.initialize(this)
     }
 }
 
