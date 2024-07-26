@@ -3,6 +3,7 @@ package com.pthw.food.data.repository
 import kotlinx.coroutines.flow.Flow
 
 interface CacheRepository {
+    fun getLanguageNormal(): String
     fun getLanguage(): Flow<String>
     suspend fun putLanguage(localeCode: String)
 

@@ -16,8 +16,16 @@ class CacheRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : CacheRepository {
 
-    private val PREF_KEY_LANGUAGE = stringPreferencesKey("language.key")
-    private val PREF_KEY_THEME_MODE = stringPreferencesKey("theme_mode.key")
+    companion object {
+        private val PREF_KEY_LANGUAGE = stringPreferencesKey("language.key")
+        private val PREF_KEY_THEME_MODE = stringPreferencesKey("theme_mode.key")
+    }
+
+    override fun getLanguageNormal(): String {
+        return runBlocking {
+            dataStore.data.first()[PREF_KEY_LANGUAGE] ?: Localization.ENGLISH
+        }
+    }
 
     override fun getLanguage(): Flow<String> {
         return dataStore.data.map {

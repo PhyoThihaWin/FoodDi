@@ -27,7 +27,7 @@ class HomePageViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
     val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
-    val currentLanguage = cacheRepository.getLanguage()
+    val currentLanguage = mutableStateOf(cacheRepository.getLanguageNormal())
 
     var pageTitle = mutableIntStateOf(R.string.app_name)
         private set
@@ -40,6 +40,7 @@ class HomePageViewModel @Inject constructor(
 
     init {
         getThemeMode()
+        getLanguageCache()
         getAllFoods()
         getSearchFoods()
     }
@@ -111,6 +112,14 @@ class HomePageViewModel @Inject constructor(
                 val data = repository.getSearchFood(it)
                 Timber.i("search: ${data.count()}")
                 foods.value = data
+            }
+        }
+    }
+
+    private fun getLanguageCache() {
+        viewModelScope.launch {
+            cacheRepository.getLanguage().collectLatest {
+                currentLanguage.value = it
             }
         }
     }

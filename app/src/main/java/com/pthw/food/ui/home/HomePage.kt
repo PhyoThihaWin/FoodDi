@@ -114,7 +114,7 @@ fun HomePage(
     HomePageContent(
         UiState(
             themeCode = viewModel.appThemeMode.value,
-            localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
+            localeCode = viewModel.currentLanguage.value,
             pageTitle = viewModel.pageTitle.intValue,
             foods = viewModel.foods.value
         )
@@ -214,7 +214,7 @@ private fun HomePageContent(
                 modifier = Modifier
                     .layoutId("background")
                     .fillMaxWidth()
-                    .fillMaxHeight(if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.2f else 0.28f)
+                    .fillMaxHeight(if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.18f else 0.28f)
                     .background(color = if (isDarkMode) MaterialTheme.colorScheme.background else ColorPrimary)
             )
 
@@ -371,6 +371,9 @@ private val startConstraintSet = ConstraintSet {
     }
     val title = createRefFor("title")
     constrain(title) {
+        alpha = 1f
+        scaleY = 1f
+        scaleX = 1f
         top.linkTo(background.top)
         start.linkTo(background.start)
         end.linkTo(background.end)
@@ -410,6 +413,9 @@ private val endConstraintSet = ConstraintSet {
     }
     val title = createRefFor("title")
     constrain(title) {
+        alpha = 0f
+        scaleY = 0.6f
+        scaleX = 0.6f
         top.linkTo(background.top)
         start.linkTo(background.start)
         end.linkTo(background.end)
@@ -904,20 +910,6 @@ private fun AboutAppDialogPreview() {
     FoodDiAppTheme {
         Surface {
             AboutAppDialog(true) {
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun HomeSearchBarPreview() {
-    FoodDiAppTheme {
-        Surface {
-            HomeSearchBarView(
-                modifier = Modifier.fillMaxWidth(),
-                hint = "Search",
-                iconClick = { /*TODO*/ }) {
             }
         }
     }

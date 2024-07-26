@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import com.facebook.ads.Ad
 import com.facebook.ads.AdError
@@ -29,6 +30,8 @@ fun MetaBanner(
     modifier: Modifier = Modifier,
     adSize: AdSize = AdSize.BANNER_HEIGHT_50
 ) {
+    if (LocalView.current.isInEditMode) return
+
     AndroidView(
         modifier = modifier.fillMaxWidth(),
         factory = {
@@ -59,6 +62,8 @@ fun MetaBanner(
 fun MetaInterstitial(
     onFinished: () -> Unit
 ) {
+    if (LocalView.current.isInEditMode) return
+
     Timber.i("Reached: MetaInterstitial")
 
     val context = LocalContext.current

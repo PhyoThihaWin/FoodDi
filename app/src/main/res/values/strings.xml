@@ -17,7 +17,7 @@
     <string name="light_mode">Dark Mode OFF</string>
     <string name="dark_mode">Dark Mode ON</string>
 
-    <string name="test_device_hash" translatable="false">2539f03d-3eed-457b-8a85-82498286f966</string>
+    <string name="test_device_hash" translatable="false">764729ae-2881-4093-ad17-25c1a6e6e44a</string>
     <string name="meta_ad_banner" translatable="false">1505148630389787_1505196000385050</string>
     <string name="meta_ad_interstitial" translatable="false">1505148630389787_1505196177051699</string>
 <!--    <string name="meta_ad_banner" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>-->
