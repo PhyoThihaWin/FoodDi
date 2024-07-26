@@ -107,8 +107,9 @@ fun FoodDiAppTheme(
             window.statusBarColor =
                 if (darkTheme) md_theme_dark_background.toArgb() else ColorPrimary.toArgb()
             window.navigationBarColor =
-                if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
+                if (darkTheme) md_theme_dark_surface.toArgb() else md_theme_light_surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

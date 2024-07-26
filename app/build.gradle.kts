@@ -16,22 +16,42 @@ android {
         applicationId = "com.pthw.food"
         minSdk = 21
         targetSdk = 34
-        versionCode = 8
-        versionName = "2.2"
-        multiDexEnabled = true
+        versionCode = 10
+        versionName = "3.1"
         setProperty("archivesBaseName", "FoodDi-$versionName")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
+            storePassword = rootProject.ext["credentialStorePassword"] as String
+            keyAlias = rootProject.ext["credentialKeyAlias"] as String
+            keyPassword = rootProject.ext["credentialKeyPassword"] as String
+        }
+        create("release") {
+            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
+            storePassword = rootProject.ext["credentialStorePassword"] as String
+            keyAlias = rootProject.ext["credentialKeyAlias"] as String
+            keyPassword = rootProject.ext["credentialKeyPassword"] as String
+            enableV2Signing = true
+        }
+    }
+
     buildTypes {
-        getByName("release") {
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        release {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -71,6 +91,16 @@ android {
 
     composeCompiler {
         enableStrongSkippingMode = true
+    }
+
+    bundle {
+        language {
+            // Specifies that the app bundle should not support
+            // configuration APKs for language resources. These
+            // resources are instead packaged with each base and
+            // dynamic feature APK.
+            enableSplit = false
+        }
     }
 
 }

@@ -1,6 +1,4 @@
 <resources>
-    <string name="eat">Food that should not eat together</string>
-
     <string name="locale_english" translatable="false">&#127482;&#127480;\ \ \ \ \ \ English</string>
     <string name="locale_myanmar" translatable="false">&#127474;&#127474;\ \ \ \ \ \ မြန်မာ</string>
     <string name="search">Search..</string>
@@ -20,6 +18,9 @@
     <string name="dark_mode">Dark Mode ON</string>
 
     <string name="test_device_hash" translatable="false">2539f03d-3eed-457b-8a85-82498286f966</string>
-    <string name="meta_test_unit" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>
+    <string name="meta_ad_banner" translatable="false">1505148630389787_1505196000385050</string>
+    <string name="meta_ad_interstitial" translatable="false">1505148630389787_1505196177051699</string>
+<!--    <string name="meta_ad_banner" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>-->
+<!--    <string name="meta_ad_interstitial" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>-->
 
 </resources>

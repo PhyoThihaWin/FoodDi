@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.pthw.food.R
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food
-import com.pthw.food.data.repository.FoodRepository
 import com.pthw.food.data.repository.CacheRepository
+import com.pthw.food.data.repository.FoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,27 +33,40 @@ class HomePageViewModel @Inject constructor(
         private set
     var foods = mutableStateOf<List<Food>>(emptyList())
         private set
+    var searchQuery = MutableStateFlow("")
+        private set
+    var clickCountForAd = mutableIntStateOf(0)
+        private set
 
     init {
         getThemeMode()
-        getAllFood()
+        getAllFoods()
+        getSearchFoods()
     }
 
-    fun getAllFood() {
+    /**
+     * Get all foods from database
+     */
+    fun getAllFoods() {
         pageTitle.intValue = R.string.app_name
         viewModelScope.launch {
             foods.value = repository.getAllFood()
         }
     }
 
-    fun getSearchFoods(word: String) {
+    /**
+     * Update search query from UI
+     * Handle to prevent continuous request search query
+     */
+    fun updateSearchQuery(word: String) {
         viewModelScope.launch {
-            val data = repository.getSearchFood(word)
-            Timber.i("search: ${data.count()}")
-            foods.value = data
+            searchQuery.value = word
         }
     }
 
+    /**
+     * Get foods by category type from database
+     */
     fun getFoodsByType(filterType: FilterType) {
         pageTitle.intValue = filterType.title
         viewModelScope.launch {
@@ -58,18 +74,50 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update app chose language to PreferenceDataStore
+     */
     fun updateLanguageCache(localeCode: String) {
         viewModelScope.launch {
             cacheRepository.putLanguage(localeCode)
         }
     }
 
+    /**
+     * Update app chose theme to PreferenceDataStore
+     */
     fun updateCachedThemeMode(theme: String) {
         viewModelScope.launch {
             cacheRepository.putThemeMode(theme)
         }
     }
 
+    /**
+     * Update click count for remembering user actions,
+     * if it reaches, load Meta Interstitial and show
+     */
+    fun updateClickCountAd(isReset: Boolean = false) {
+        if (isReset) clickCountForAd.intValue = 0
+        else clickCountForAd.intValue++
+    }
+
+    /**
+     * Private search function to database after query flow changes
+     */
+    @OptIn(FlowPreview::class)
+    private fun getSearchFoods() {
+        viewModelScope.launch {
+            searchQuery.debounce(300).collectLatest {
+                val data = repository.getSearchFood(it)
+                Timber.i("search: ${data.count()}")
+                foods.value = data
+            }
+        }
+    }
+
+    /**
+     * Private get theme function for silently update theme variable
+     */
     private fun getThemeMode() {
         viewModelScope.launch {
             cacheRepository.getThemeMode().collectLatest {
@@ -77,5 +125,6 @@ class HomePageViewModel @Inject constructor(
             }
         }
     }
+
 
 }

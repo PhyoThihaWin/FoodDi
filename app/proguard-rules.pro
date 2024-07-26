@@ -20,5 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#save model classes
--keep class com.pthw.food.model.** {*; }
+# keep model classes
+-keepnames class * extends java.io.Serializable
+
+# keep meta audience network
+-keep class com.facebook.ads.** { *; }
+-dontwarn com.facebook.ads.**

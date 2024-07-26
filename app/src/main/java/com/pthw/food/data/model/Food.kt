@@ -3,6 +3,7 @@ package com.pthw.food.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "Food")
 data class Food(
@@ -35,7 +36,7 @@ data class Food(
 
     @ColumnInfo(name = "imgTwo")
     val imgTwo: String
-) {
+) : Serializable {
     companion object {
         fun fake() = Food(
             id = 1,

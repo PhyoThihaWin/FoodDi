@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,8 +27,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -107,50 +110,47 @@ fun HomePage(
     viewModel: HomePageViewModel = hiltViewModel()
 ) {
     Timber.i("Reached: HomePage")
-    var clickCount by remember { mutableIntStateOf(0) }
 
-    Box {
-        HomePageContent(
-            UiState(
-                themeCode = viewModel.appThemeMode.value,
-                localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
-                pageTitle = viewModel.pageTitle.intValue,
-                foods = viewModel.foods.value
-            )
-        ) {
-            when (it) {
-                is UiEvent.SearchFoods -> {
-                    clickCount++
-                    viewModel.getSearchFoods(it.search)
-                }
+    HomePageContent(
+        UiState(
+            themeCode = viewModel.appThemeMode.value,
+            localeCode = viewModel.currentLanguage.collectAsState(initial = Localization.ENGLISH).value,
+            pageTitle = viewModel.pageTitle.intValue,
+            foods = viewModel.foods.value
+        )
+    ) {
+        when (it) {
+            is UiEvent.SearchFoods -> {
+                viewModel.updateClickCountAd()
+                viewModel.updateSearchQuery(it.search)
+            }
 
-                is UiEvent.FilterFoods -> {
-                    clickCount++
-                    if (it.filterType.type == null) {
-                        viewModel.getAllFood()
-                    } else {
-                        viewModel.getFoodsByType(it.filterType)
-                    }
+            is UiEvent.FilterFoods -> {
+                viewModel.updateClickCountAd()
+                if (it.filterType.type == null) {
+                    viewModel.getAllFoods()
+                } else {
+                    viewModel.getFoodsByType(it.filterType)
                 }
+            }
 
-                is UiEvent.ChangeLanguage -> {
-                    clickCount++
-                    viewModel.updateLanguageCache(it.localeCode)
-                }
+            is UiEvent.ChangeLanguage -> {
+                viewModel.updateClickCountAd()
+                viewModel.updateLanguageCache(it.localeCode)
+            }
 
-                is UiEvent.ChangeThemeMode -> {
-                    clickCount++
-                    viewModel.updateCachedThemeMode(it.theme)
-                }
+            is UiEvent.ChangeThemeMode -> {
+                viewModel.updateClickCountAd()
+                viewModel.updateCachedThemeMode(it.theme)
             }
         }
+    }
 
-        // interstitial ad
-        if (clickCount > ConstantValue.INTERSTITIAL_COUNT) {
-            LocalFocusManager.current.clearFocus()
-            MetaInterstitial {
-                clickCount = 0
-            }
+    // interstitial ad
+    if (viewModel.clickCountForAd.intValue > ConstantValue.INTERSTITIAL_COUNT) {
+        LocalFocusManager.current.clearFocus()
+        MetaInterstitial {
+            viewModel.updateClickCountAd(true)
         }
     }
 
@@ -214,7 +214,7 @@ private fun HomePageContent(
                 modifier = Modifier
                     .layoutId("background")
                     .fillMaxWidth()
-                    .fillMaxHeight(0.2f)
+                    .fillMaxHeight(if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.2f else 0.28f)
                     .background(color = if (isDarkMode) MaterialTheme.colorScheme.background else ColorPrimary)
             )
 
@@ -524,13 +524,16 @@ private fun HomeSearchBarView(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(Shapes.medium)
-                .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                .padding(horizontal = Dimens.MARGIN_MEDIUM)
 
         ) {
             Icon(
-                modifier = Modifier.clickable {
-                    iconClick()
-                },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable {
+                        iconClick()
+                    }
+                    .padding(Dimens.MARGIN_MEDIUM),
                 painter = painterResource(id = R.drawable.ic_search_normal),
                 contentDescription = ""
             )
@@ -545,6 +548,9 @@ private fun HomeSearchBarView(
                     .wrapContentHeight()
                     .fillMaxWidth(),
                 colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
@@ -649,7 +655,8 @@ private fun FilterDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -897,6 +904,20 @@ private fun AboutAppDialogPreview() {
     FoodDiAppTheme {
         Surface {
             AboutAppDialog(true) {
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeSearchBarPreview() {
+    FoodDiAppTheme {
+        Surface {
+            HomeSearchBarView(
+                modifier = Modifier.fillMaxWidth(),
+                hint = "Search",
+                iconClick = { /*TODO*/ }) {
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.util.DebugLogger
+import com.pthw.food.BuildConfig
 import com.pthw.food.R
 
 /**
@@ -21,7 +22,7 @@ fun CoilAsyncImage(
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val imageLoader = LocalContext.current.imageLoader.newBuilder()
-        .logger(DebugLogger())
+        .logger(if (BuildConfig.DEBUG) DebugLogger() else null)
         .build()
 
     AsyncImage(

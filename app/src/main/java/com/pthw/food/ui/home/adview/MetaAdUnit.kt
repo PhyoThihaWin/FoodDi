@@ -32,7 +32,7 @@ fun MetaBanner(
     AndroidView(
         modifier = modifier.fillMaxWidth(),
         factory = {
-            AdView(it, it.getString(R.string.meta_test_unit), adSize).apply {
+            AdView(it, it.getString(R.string.meta_ad_banner), adSize).apply {
                 loadAd(buildLoadAdConfig().withAdListener(object : AdListener {
                     override fun onError(p0: Ad?, p1: AdError?) {
                         Timber.e("MetaAd: ${p1?.errorMessage}")
@@ -66,7 +66,7 @@ fun MetaInterstitial(
     val interstitialAd: InterstitialAd = remember {
         InterstitialAd(
             context,
-            context.getString(R.string.meta_test_unit)
+            context.getString(R.string.meta_ad_interstitial)
         )
     }
 
@@ -75,6 +75,7 @@ fun MetaInterstitial(
             buildLoadAdConfig().withAdListener(object : InterstitialAdListener {
                 override fun onError(p0: Ad?, p1: AdError?) {
                     Timber.e("Ad was onError.")
+                    adLoadSuccess = true
                 }
 
                 override fun onAdLoaded(p0: Ad?) {
