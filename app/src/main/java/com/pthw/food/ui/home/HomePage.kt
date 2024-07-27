@@ -84,10 +84,10 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.facebook.ads.AdSize
 import com.pthw.food.R
-import com.pthw.food.composable.CoilAsyncImage
-import com.pthw.food.composable.LocalizationUpdater
-import com.pthw.food.composable.RadioSelectionDialog
-import com.pthw.food.composable.TitleTextView
+import com.pthw.food.common.composable.CoilAsyncImage
+import com.pthw.food.common.composable.LocalizationUpdater
+import com.pthw.food.common.composable.RadioSelectionDialog
+import com.pthw.food.common.composable.TitleTextView
 import com.pthw.food.data.model.AppThemeMode
 import com.pthw.food.data.model.FilterType
 import com.pthw.food.data.model.Food

@@ -1,4 +1,4 @@
-package com.pthw.food.composable
+package com.pthw.food.common.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.pthw.food.ui.theme.Dimens
 import com.pthw.food.ui.theme.FoodDiAppTheme
-import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 19/04/2024.

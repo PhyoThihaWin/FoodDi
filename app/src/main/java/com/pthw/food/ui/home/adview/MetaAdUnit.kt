@@ -18,7 +18,7 @@ import com.facebook.ads.AdView
 import com.facebook.ads.InterstitialAd
 import com.facebook.ads.InterstitialAdListener
 import com.pthw.food.R
-import com.pthw.food.composable.LoadingDialog
+import com.pthw.food.common.composable.LoadingDialog
 import timber.log.Timber
 
 /**

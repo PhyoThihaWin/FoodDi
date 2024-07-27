@@ -1,4 +1,4 @@
-package com.pthw.food.composable
+package com.pthw.food.common.composable
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

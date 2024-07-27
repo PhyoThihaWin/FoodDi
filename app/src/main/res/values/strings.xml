@@ -17,10 +17,20 @@
     <string name="light_mode">Dark Mode OFF</string>
     <string name="dark_mode">Dark Mode ON</string>
 
-    <string name="test_device_hash" translatable="false">764729ae-2881-4093-ad17-25c1a6e6e44a</string>
+    <!-- region FCM -->
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="request_notification_permission" translatable="false">Request permission</string>
+    <string name="notification_permission_title" translatable="false">Notification</string>
+    <string name="notification_permission_description" translatable="false">The notification permission is important for this app. Please grant the permission.</string>
+    <string name="notification_permission_settings" translatable="false">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
+    <!-- endregion -->
+
+    <!-- region audience network ad -->
+    <string name="test_device_hash" translatable="false">5b0f683c-6ad5-455a-9377-d28c6e862452</string>
     <string name="meta_ad_banner" translatable="false">1505148630389787_1505196000385050</string>
     <string name="meta_ad_interstitial" translatable="false">1505148630389787_1505196177051699</string>
 <!--    <string name="meta_ad_banner" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>-->
 <!--    <string name="meta_ad_interstitial" translatable="false">IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID</string>-->
+    <!-- endregion -->
 
 </resources>

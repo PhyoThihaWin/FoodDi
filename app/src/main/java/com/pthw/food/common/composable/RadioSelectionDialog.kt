@@ -1,4 +1,4 @@
-package com.pthw.food.composable
+package com.pthw.food.common.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,6 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.pthw.food.ui.theme.Dimens
 import com.pthw.food.ui.theme.Shapes

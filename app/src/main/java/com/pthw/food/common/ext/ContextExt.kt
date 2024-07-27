@@ -1,11 +1,11 @@
-package com.pthw.food.utils
+package com.pthw.food.common.ext
 
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 
 /**
- * Created by P.T.H.W on 24/07/2024.
+ * Created by P.T.H.W on 27/07/2024.
  */
 
 fun Context.findActivity(): Activity? {
