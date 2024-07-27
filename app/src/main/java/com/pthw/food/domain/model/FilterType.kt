@@ -1,4 +1,4 @@
-package com.pthw.food.data.model
+package com.pthw.food.domain.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

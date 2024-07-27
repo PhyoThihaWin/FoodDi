@@ -8,12 +8,9 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.google.firebase.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.messaging
-import com.pthw.food.MainActivity
+import com.pthw.food.ui.MainActivity
 import com.pthw.food.R
 import timber.log.Timber
 import kotlin.random.Random

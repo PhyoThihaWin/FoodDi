@@ -1,6 +1,7 @@
-package com.pthw.food.data.repository
+package com.pthw.food.data.cache.repository
 
-import com.pthw.food.data.database.AppDatabase
+import com.pthw.food.data.cache.database.AppDatabase
+import com.pthw.food.domain.repository.FoodRepository
 import com.pthw.food.utils.ConstantValue
 import java.util.*
 import javax.inject.Inject

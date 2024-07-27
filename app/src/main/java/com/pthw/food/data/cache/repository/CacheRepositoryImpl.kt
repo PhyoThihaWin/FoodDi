@@ -1,11 +1,12 @@
-package com.pthw.food.data.repository
+package com.pthw.food.data.cache.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.pthw.food.data.model.AppThemeMode
-import com.pthw.food.data.model.Localization
+import com.pthw.food.domain.model.AppThemeMode
+import com.pthw.food.domain.model.Localization
+import com.pthw.food.domain.repository.CacheRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

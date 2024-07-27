@@ -1,9 +1,9 @@
 package com.pthw.food.di
 
-import com.pthw.food.data.repository.FoodRepository
-import com.pthw.food.data.repository.FoodRepositoryImpl
-import com.pthw.food.data.repository.CacheRepository
-import com.pthw.food.data.repository.CacheRepositoryImpl
+import com.pthw.food.domain.repository.FoodRepository
+import com.pthw.food.data.cache.repository.FoodRepositoryImpl
+import com.pthw.food.domain.repository.CacheRepository
+import com.pthw.food.data.cache.repository.CacheRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

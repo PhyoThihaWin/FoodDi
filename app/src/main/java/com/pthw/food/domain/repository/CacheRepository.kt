@@ -1,4 +1,4 @@
-package com.pthw.food.data.repository
+package com.pthw.food.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,9 +1,9 @@
-package com.pthw.food.di
+package com.pthw.food.data.di
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.pthw.food.data.database.AppDatabase
+import com.pthw.food.data.cache.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

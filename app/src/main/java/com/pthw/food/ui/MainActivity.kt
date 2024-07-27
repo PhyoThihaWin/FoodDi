@@ -1,4 +1,4 @@
-package com.pthw.food
+package com.pthw.food.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pthw.food.common.composable.permission.RequestNotificationPermissionDialog
-import com.pthw.food.data.model.AppThemeMode
+import com.pthw.food.domain.model.AppThemeMode
 import com.pthw.food.ui.home.HomePage
 import com.pthw.food.ui.theme.FoodDiAppTheme
 import dagger.hilt.android.AndroidEntryPoint

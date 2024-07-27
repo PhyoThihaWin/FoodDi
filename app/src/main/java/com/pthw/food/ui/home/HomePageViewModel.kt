@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pthw.food.R
-import com.pthw.food.data.model.FilterType
-import com.pthw.food.data.model.Food
-import com.pthw.food.data.repository.CacheRepository
-import com.pthw.food.data.repository.FoodRepository
+import com.pthw.food.domain.model.FilterType
+import com.pthw.food.domain.model.Food
+import com.pthw.food.domain.repository.CacheRepository
+import com.pthw.food.domain.repository.FoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,6 +1,6 @@
-package com.pthw.food.data.repository
+package com.pthw.food.domain.repository
 
-import com.pthw.food.data.model.Food
+import com.pthw.food.domain.model.Food
 
 interface FoodRepository {
     suspend fun getAllFood(): List<Food>

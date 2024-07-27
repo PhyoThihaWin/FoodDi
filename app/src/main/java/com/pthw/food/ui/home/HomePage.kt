@@ -88,10 +88,10 @@ import com.pthw.food.common.composable.CoilAsyncImage
 import com.pthw.food.common.composable.LocalizationUpdater
 import com.pthw.food.common.composable.RadioSelectionDialog
 import com.pthw.food.common.composable.TitleTextView
-import com.pthw.food.data.model.AppThemeMode
-import com.pthw.food.data.model.FilterType
-import com.pthw.food.data.model.Food
-import com.pthw.food.data.model.Localization
+import com.pthw.food.domain.model.AppThemeMode
+import com.pthw.food.domain.model.FilterType
+import com.pthw.food.domain.model.Food
+import com.pthw.food.domain.model.Localization
 import com.pthw.food.ui.home.adview.MetaBanner
 import com.pthw.food.ui.home.adview.MetaInterstitial
 import com.pthw.food.ui.theme.ColorPrimary

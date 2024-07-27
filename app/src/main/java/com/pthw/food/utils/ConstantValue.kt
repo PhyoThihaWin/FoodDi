@@ -1,9 +1,9 @@
 package com.pthw.food.utils
 
 import com.pthw.food.R
-import com.pthw.food.data.model.AppThemeMode
-import com.pthw.food.data.model.FilterType
-import com.pthw.food.data.model.Localization
+import com.pthw.food.domain.model.AppThemeMode
+import com.pthw.food.domain.model.FilterType
+import com.pthw.food.domain.model.Localization
 
 object ConstantValue {
     const val INTERSTITIAL_COUNT = 10

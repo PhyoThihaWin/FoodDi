@@ -16,8 +16,8 @@ android {
         applicationId = "com.pthw.food"
         minSdk = 21
         targetSdk = 34
-        versionCode = 11
-        versionName = "3.1.1"
+        versionCode = 12
+        versionName = "3.1.2"
         setProperty("archivesBaseName", "FoodDi-$versionName")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
