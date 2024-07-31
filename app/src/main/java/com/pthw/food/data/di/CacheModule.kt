@@ -30,6 +30,7 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providePreferenceDataStore(@ApplicationContext context: Context) = context.dataStore
+
     private val Context.dataStore by preferencesDataStore("pref.foodDi")
 
 }

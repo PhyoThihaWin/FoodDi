@@ -1,70 +1,61 @@
-package com.pthw.food
+package com.pthw.food.data
 
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.pthw.food.data.cache.database.AppDatabase
 import com.pthw.food.data.cache.repository.FoodRepositoryImpl
 import com.pthw.food.domain.model.Food
 import com.pthw.food.domain.repository.FoodRepository
-import io.mockk.InternalPlatformDsl.toStr
-import io.mockk.clearMocks
-import io.mockk.coEvery
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-/**
- * Created by P.T.H.W on 30/07/2024.
- */
-@RunWith(JUnit4::class)
+@RunWith(AndroidJUnit4::class)
+@SmallTest
 class FoodRepositoryImplTest {
 
+    private lateinit var context: Context
     private lateinit var database: AppDatabase
     private lateinit var foodRepository: FoodRepository
 
     @Before
     fun setUp() {
-        database = mockk()
+        context = ApplicationProvider.getApplicationContext()
+        database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+            .allowMainThreadQueries().build()
         foodRepository = FoodRepositoryImpl(database)
 
-        coEvery { database.foodDao().getAllFood() } returns testFoods
-        coEvery { database.foodDao().getFoodByType(any()) } answers { type ->
-            testFoods.filter { it.type == type.invocation.args[0] }
-        }
-        coEvery { database.foodDao().getSearchFood(any()) } answers { type ->
-            val word = type.invocation.args[0].toStr()
-            testFoods.filter {
-                it.oneEN.contains(word, false) ||
-                        it.oneMM.contains(word, false) ||
-                        it.twoEN.contains(word, false) ||
-                        it.twoMM.contains(word, false)
-            }
+        runBlocking {
+            database.foodDao().insertForTestingPurpose(testFoods)
         }
     }
 
     @After
     fun tearDown() {
-        clearMocks(database)
+        database.close()
     }
 
     @Test
-    fun `verify getAllFoods`() = runBlocking {
+    fun verify_getAllFood() = runBlocking {
         val foods = foodRepository.getAllFood()
         Assert.assertTrue(foods.size > 1)
     }
 
     @Test
-    fun `verify getSearchFoods`() = runBlocking {
+    fun verify_getSearchFoods() = runBlocking {
         val word = "Jui"
         val foods = foodRepository.getSearchFood(word)
         Assert.assertEquals(2, foods.size)
     }
 
     @Test
-    fun `verify getFoodByType`() = runBlocking {
+    fun verify_getFoodByType() = runBlocking {
         val type = "meat"
         val foodsByType = foodRepository.getFoodByType(type)
         Assert.assertEquals("Pork", foodsByType[0].dieEN)
@@ -111,4 +102,5 @@ class FoodRepositoryImplTest {
             )
         )
     }
+
 }

@@ -1,6 +1,7 @@
 package com.pthw.food.data.cache.database
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import com.pthw.food.domain.model.Food
 
@@ -15,4 +16,7 @@ interface FoodDao {
 
     @Query("SELECT * FROM Food")
     suspend fun getAllFood(): List<Food>
+
+    @Insert
+    suspend fun insertForTestingPurpose(data: List<Food>)
 }

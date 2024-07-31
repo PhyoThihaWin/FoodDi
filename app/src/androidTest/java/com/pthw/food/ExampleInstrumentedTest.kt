@@ -1,5 +1,7 @@
 package com.pthw.food
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -18,7 +20,7 @@ class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().context
+        val appContext: Context = ApplicationProvider.getApplicationContext()
         assertEquals("com.pthw.food", appContext.packageName)
     }
 }
