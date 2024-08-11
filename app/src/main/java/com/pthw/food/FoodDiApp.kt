@@ -26,20 +26,13 @@ class FoodDiApp : Application() {
     }
 
     private fun setupTimber() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(object : Timber.DebugTree() {
-                override fun createStackElementTag(element: StackTraceElement): String {
-                    val prefix =
-                        super.createStackElementTag(element)?.substringBefore("$") ?: "Timber"
-                    return String.format(
-                        "C:%s, L:%s",
-                        prefix,
-                        element.lineNumber,
-                        element.methodName
-                    )
-                }
-            })
-        }
+        if (!BuildConfig.DEBUG) return
+        Timber.plant(object : Timber.DebugTree() {
+            override fun createStackElementTag(element: StackTraceElement): String {
+                val prefix = super.createStackElementTag(element)?.substringBefore("$") ?: "Timber"
+                return String.format("C:%s, L:%s", prefix, element.lineNumber, element.methodName)
+            }
+        })
     }
 
     private fun manageWebKit() {

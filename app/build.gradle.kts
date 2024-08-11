@@ -106,13 +106,19 @@ android {
 }
 
 dependencies {
+    // Dependencies for local unit tests
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("junit:junit:4.12")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0-RC")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+
+    // Dependencies for Android instrumented unit tests
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("com.google.truth:truth:1.1.5")
     androidTestImplementation("android.arch.core:core-testing:1.1.1")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0-RC")
 
     // Compose
     implementation("androidx.activity:activity-ktx:1.9.1")

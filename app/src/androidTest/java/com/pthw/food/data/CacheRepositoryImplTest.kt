@@ -3,8 +3,6 @@ package com.pthw.food.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.preferencesOf
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,8 +12,7 @@ import com.pthw.food.domain.model.AppThemeMode
 import com.pthw.food.domain.model.Localization
 import com.pthw.food.domain.repository.CacheRepository
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +38,7 @@ class CacheRepositoryImplTest {
     }
 
     @Test
-    fun verify_put_en_Language() = runBlocking {
+    fun verify_put_en_Language() = runTest {
         val locale = Localization.ENGLISH
         cacheRepository.putLanguage(locale)
 
@@ -51,7 +48,7 @@ class CacheRepositoryImplTest {
     }
 
     @Test
-    fun verify_put_my_Language() = runBlocking {
+    fun verify_put_my_Language() = runTest {
         val locale = Localization.MYANMAR
         cacheRepository.putLanguage(locale)
 
@@ -61,19 +58,19 @@ class CacheRepositoryImplTest {
     }
 
     @Test
-    fun verify_getLanguage() = runBlocking {
+    fun verify_getLanguage() = runTest {
         val locale = cacheRepository.getLanguage()
-        Assert.assertEquals(locale.first(), Localization.MYANMAR)
+        Assert.assertEquals(Localization.MYANMAR, locale.first())
     }
 
     @Test
     fun verify_getLanguageNormal() {
         val locale = cacheRepository.getLanguageNormal()
-        Assert.assertEquals(locale, Localization.MYANMAR)
+        Assert.assertEquals(Localization.MYANMAR, locale)
     }
 
     @Test
-    fun verify_putTheme() = runBlocking {
+    fun verify_putTheme() = runTest {
         val theme = AppThemeMode.LIGHT_MODE
         cacheRepository.putThemeMode(theme)
 
@@ -83,7 +80,7 @@ class CacheRepositoryImplTest {
     }
 
     @Test
-    fun verify_getTheme() = runBlocking {
+    fun verify_getTheme() = runTest {
         val theme = cacheRepository.getThemeMode()
         Assert.assertEquals(theme.first(), AppThemeMode.LIGHT_MODE)
     }
