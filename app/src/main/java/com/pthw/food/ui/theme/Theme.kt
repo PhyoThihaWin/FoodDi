@@ -86,7 +86,7 @@ private val DarkColorScheme = darkColorScheme(
 fun FoodDiAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
-    content: @Composable (darkTheme: Boolean) -> Unit
+    content: @Composable () -> Unit
 ) {
 
     // default colorScheme
@@ -118,7 +118,7 @@ fun FoodDiAppTheme(
         typography = Typography,
         shapes = Shapes,
         content = {
-            content(darkTheme)
+            content()
         }
     )
 }

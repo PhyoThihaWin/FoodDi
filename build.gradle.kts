@@ -19,17 +19,18 @@ tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
 }
 
+// Read keystore file
 fun credentialData(): java.util.Properties {
     val credentialProperties = java.util.Properties()
     credentialProperties.load(java.io.FileInputStream(project.rootProject.file("credential.properties")))
     return credentialProperties
 }
 
-val credentialProperties = credentialData()
+// KEYSTORE CONFIG
 ext {
     // KEYSTORE CONFIG
-    set("credentialStoreFile", credentialProperties["storeFile"].toString())
-    set("credentialStorePassword", credentialProperties["storePassword"].toString())
-    set("credentialKeyAlias", credentialProperties["keyAlias"].toString())
-    set("credentialKeyPassword", credentialProperties["keyPassword"].toString())
+    set("credentialStoreFile", credentialData()["storeFile"].toString())
+    set("credentialStorePassword", credentialData()["storePassword"].toString())
+    set("credentialKeyAlias", credentialData()["keyAlias"].toString())
+    set("credentialKeyPassword", credentialData()["keyPassword"].toString())
 }
